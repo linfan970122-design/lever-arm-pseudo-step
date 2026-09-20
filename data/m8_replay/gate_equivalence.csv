@@ -1,0 +1,5 @@
+tag,n,n_pub_py,n_pub_cpp,pub_mismatch,yaw_cmp,yaw_mismatch,yaw_p95_deg,n_reanchor,n_gap
+inj_gate_q060_eq,9755,9612,9746,134,9612,509,0.5332,25,25
+inj_gate_q1e5_eq,9759,9639,9692,61,9635,293,0.2685,4,4
+inj_gate_q060,9755,9609,9743,134,9609,768,0.815,24,24
+inj_gate_q1e5,9759,9546,9695,161,9540,346,0.3342,7,7

@@ -1,0 +1,25 @@
+sigma_deg,k_sigma,subset,false_gate_pct,genuine_frames,genuine_rejected,rejected,rejected_pct_all_frames,withheld,onsets_rejected,onsets,residual_episodes_010,residual_frames_010,residual_episodes_005,note
+0.5,3.0,all,19.31,321238,62031,84159,23.07,0,14,21,0,0,10,"declared/measured sigma, same k as §9.5"
+0.5,3.0,operational,17.5634,304412,53465,74995,21.5967,0,10,15,0,0,10,"declared/measured sigma, same k as §9.5"
+0.5,5.0,all,14.5618,321238,46778,66182,18.142,0,13,21,0,0,12,"declared/measured sigma, same k as §9.5"
+0.5,5.0,operational,13.5504,304412,41249,60088,17.3039,0,9,15,0,0,11,"declared/measured sigma, same k as §9.5"
+0.74,3.0,all,16.7496,321238,53806,74521,20.428,0,13,21,0,0,10,"declared/measured sigma, same k as §9.5"
+0.74,3.0,operational,15.188,304412,46234,66385,19.1172,0,9,15,0,0,10,"declared/measured sigma, same k as §9.5"
+0.74,5.0,all,12.0683,321238,38768,56779,15.5645,0,14,21,0,0,11,"declared/measured sigma, same k as §9.5"
+0.74,5.0,operational,11.173,304412,34012,51498,14.8302,0,10,15,0,0,10,"declared/measured sigma, same k as §9.5"
+1.09,3.0,all,13.584,321238,43637,62271,17.0699,0,14,21,0,0,9,"declared/measured sigma, same k as §9.5"
+1.09,3.0,operational,12.6956,304412,38647,56743,16.3406,0,9,15,0,0,9,"declared/measured sigma, same k as §9.5"
+1.09,5.0,all,11.5419,321238,37077,53250,14.5971,0,13,21,0,0,10,"declared/measured sigma, same k as §9.5"
+1.09,5.0,operational,9.4405,304412,28738,44406,12.7878,0,9,15,0,0,9,"declared/measured sigma, same k as §9.5"
+0.5,219.2613,all,0.0439,321238,141,284,0.0779,0,0,21,2,3,5,matched availability to v3(b) all 0.044 %
+0.5,219.2613,operational,0.0457,304412,139,265,0.0763,0,0,15,1,2,4,matched availability to v3(b) all 0.044 %
+0.5,224.1802,all,0.0395,321238,127,262,0.0718,0,0,21,2,3,5,matched availability to v3(b) operational 0.041 %
+0.5,224.1802,operational,0.0411,304412,125,245,0.0706,0,0,15,1,2,4,matched availability to v3(b) operational 0.041 %
+0.74,144.848,all,0.0439,321238,141,306,0.0839,0,0,21,0,0,3,matched availability to v3(b) all 0.044 %
+0.74,144.848,operational,0.0457,304412,139,288,0.0829,0,0,15,0,0,2,matched availability to v3(b) all 0.044 %
+0.74,151.875,all,0.0408,321238,131,285,0.0781,0,0,21,0,0,3,matched availability to v3(b) operational 0.041 %
+0.74,151.875,operational,0.0424,304412,129,267,0.0769,0,0,15,0,0,2,matched availability to v3(b) operational 0.041 %
+1.09,102.25,all,0.0448,321238,144,312,0.0855,0,0,21,0,0,7,matched availability to v3(b) all 0.044 %
+1.09,102.25,operational,0.0466,304412,142,294,0.0847,0,0,15,0,0,6,matched availability to v3(b) all 0.044 %
+1.09,112.3785,all,0.0395,321238,127,274,0.0751,0,0,21,0,0,7,matched availability to v3(b) operational 0.041 %
+1.09,112.3785,operational,0.0411,304412,125,256,0.0737,0,0,15,0,0,6,matched availability to v3(b) operational 0.041 %

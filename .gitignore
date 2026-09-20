@@ -1,0 +1,13 @@
+# Replay outputs and per-run recordings (regenerated, not distributed)
+runs/
+out/
+smoke/
+
+# Recordings are not part of this repository
+*.bag
+*.bag.active
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/

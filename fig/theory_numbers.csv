@@ -1,0 +1,69 @@
+group,quantity,value,unit,note
+geometry,L_x,0.235000,m,launch L28
+geometry,L_y,-0.280000,m,"launch L29, left-positive"
+geometry,L_z,-0.175000,m,"launch L30, not rotated"
+geometry,|L|,0.365548,m,horizontal lever-arm length
+geometry,2|L|,0.731095,m,maximum possible position step
+geometry,phi,-49.993744,deg,"atan2(Ly, Lx), body-frame bearing of L"
+geometry,tau,0.200000,s,"/rtk_odom frame interval, 5 Hz"
+geometry,sigma_psi,0.500000,deg,heading 1-sigma in cov[35]
+event,Delta (one 5 Hz frame),67.541500,deg,"2026-09-06 15:57:03.094, heading 253.2119 -> 185.6704; the 1 s figure quoted in P1 is 69.8 deg, the per-frame value is the one that pairs with the measured step"
+event,measured |dp|,0.401400,m,published position step over that frame
+event,predicted |dp|,0.406395,m,2|L| sin(|Delta|/2)
+step_magnitude,|dp| at Delta=1 deg,0.006380,m,
+step_magnitude,|dp| at Delta=2 deg,0.012759,m,
+step_magnitude,|dp| at Delta=5 deg,0.031890,m,
+step_magnitude,|dp| at Delta=10 deg,0.063719,m,
+step_magnitude,|dp| at Delta=20 deg,0.126953,m,
+step_magnitude,|dp| at Delta=30 deg,0.189221,m,
+step_magnitude,|dp| at Delta=45 deg,0.279778,m,
+step_magnitude,|dp| at Delta=67.5415 deg,0.406395,m,recorded event (one 5 Hz frame)
+step_magnitude,|dp| at Delta=90 deg,0.516962,m,
+step_magnitude,|dp| at Delta=180 deg,0.731095,m,
+step_magnitude,event measured |dp|,0.401400,m,"0906 15:57, vs 0.4064 m predicted"
+step_magnitude,event residual,0.004995,m,predicted minus measured
+step_magnitude,event back-solved |L|,0.361055,m,"|dp|_meas / (2 sin(|Delta|/2)), vs surveyed 0.3655 m"
+step_magnitude,|du| (any Delta),0.000000,m,z is not rotated
+direction,along at Delta=67.5415 deg,0.403990,m,"body x, forward"
+direction,cross at Delta=67.5415 deg,0.044141,m,"body y, left"
+direction,norm at Delta=67.5415 deg,0.406395,m,
+direction,along at Delta=-67.5415 deg,-0.113537,m,"body x, forward"
+direction,cross at Delta=-67.5415 deg,-0.390213,m,"body y, left"
+direction,norm at Delta=-67.5415 deg,0.406395,m,
+direction,along at Delta=-100 deg,0.000061,m,"body x, forward"
+direction,cross at Delta=-100 deg,-0.560051,m,"body y, left"
+direction,norm at Delta=-100 deg,0.560051,m,
+direction,along at Delta=10 deg,0.052192,m,"body x, forward"
+direction,cross at Delta=10 deg,0.036553,m,"body y, left"
+direction,norm at Delta=10 deg,0.063719,m,
+direction,along at Delta=-10 deg,-0.045051,m,"body x, forward"
+direction,cross at Delta=-10 deg,-0.045061,m,"body y, left"
+direction,norm at Delta=-10 deg,0.063719,m,
+direction,along at Delta=30 deg,0.171484,m,"body x, forward"
+direction,cross at Delta=30 deg,0.079987,m,"body y, left"
+direction,norm at Delta=30 deg,0.189221,m,
+direction,Delta with along = 0,-99.987488,deg,"Delta = 2*phi; pure cross-track step, invisible to any along-track test"
+delta_min,Delta_min at T=0.03 m,4.703509,deg,
+delta_min,Delta_min at T=0.05 m,7.843103,deg,
+delta_min,Delta_min at T=0.10 m,15.723252,deg,
+delta_min,Delta_min at T=0.20 m,31.752702,deg,
+delta_min,Delta_min at T=0.30 m,48.452811,deg,deployed
+delta_min,Delta_min at T=0.50 m,86.299196,deg,deployed
+delta_min,guaranteed-miss threshold,0.731095,m,T >= 2|L| : no heading outlier is ever detectable in the position domain
+delta_min,T at Delta_min = 67.54 deg,0.406395,m,threshold that would just catch the recorded event
+gate_equivalence,T_eq at g=3 deg,0.019138,m,2|L| sin(g/2)
+gate_equivalence,T_eq at g=5 deg,0.031890,m,2|L| sin(g/2)
+gate_equivalence,T_eq at g=7 deg,0.044632,m,2|L| sin(g/2)
+gate_equivalence,T_eq at g=10 deg,0.063719,m,2|L| sin(g/2)
+gate_equivalence,omega_max at g=3 deg,0.261799,rad/s,turn rate a real vehicle would need to produce this frame increment
+gate_equivalence,omega_max at g=5 deg,0.436332,rad/s,turn rate a real vehicle would need to produce this frame increment
+gate_equivalence,omega_max at g=7 deg,0.610865,rad/s,turn rate a real vehicle would need to produce this frame increment
+gate_equivalence,omega_max at g=10 deg,0.872665,rad/s,turn rate a real vehicle would need to produce this frame increment
+hold_cost,"cost at omega=0.3 rad/s, hold=0.4 s",0.043839,m,2 frames at tau=0.2 s
+hold_cost,"cost at omega=0.3 rad/s, hold=0.6 s",0.065710,m,3 frames at tau=0.2 s
+hold_cost,"cost at omega=0.3 rad/s, hold=1.0 s",0.109253,m,5 frames at tau=0.2 s
+hold_cost,"cost at omega=0.5 rad/s, hold=0.4 s",0.072988,m,2 frames at tau=0.2 s
+hold_cost,"cost at omega=0.5 rad/s, hold=0.6 s",0.109253,m,3 frames at tau=0.2 s
+hold_cost,"cost at omega=0.5 rad/s, hold=1.0 s",0.180876,m,5 frames at tau=0.2 s
+hold_cost,omega*tau at omega=0.3 rad/s,3.437747,deg,physical per-frame heading increment ceiling [TO BE MEASURED]
+hold_cost,omega*tau at omega=0.5 rad/s,5.729578,deg,physical per-frame heading increment ceiling [TO BE MEASURED]

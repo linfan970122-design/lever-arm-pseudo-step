@@ -1,0 +1,162 @@
+<launch>
+  <!-- M8b: same chain as m8.launch, plus the option of a MEASUREMENT-side gate
+       between the republished raw heading and the EKF's imu0 input.
+       One arm per invocation; the workspace sourced before roslaunch decides
+       whether navsat_transform carries the heading-continuity patch, and
+       meas_gate decides whether the raw heading is gated before the EKF. -->
+
+  <arg name="bag"/>
+  <arg name="out_dir"/>
+  <arg name="events_file" default=""/>
+  <arg name="inject"      default="false"/>
+  <arg name="rate"        default="3.0"/>
+  <arg name="start"       default="0.0"/>
+  <arg name="duration"    default="100000"/>
+  <arg name="gate"        default="false"/>     <!-- patched build: enable the gate -->
+  <arg name="max_yaw_rate" default="1.0e9"/>  <!-- 1.234 = gate on; 1e9 = gate effectively open -->
+  <arg name="mahal"       default="1.0e12"/>    <!-- EKF imu0 pose rejection threshold; 1e12 = off -->
+  <arg name="yaw_pnc"     default="0.06"/>    <!-- EKF yaw process noise; sets the Kalman gain on heading -->
+  <arg name="origin_file" default="$(env HOME)/.ros/rtk_origin.yaml"/>
+  <arg name="datum_lat"/>
+  <arg name="datum_lon"/>
+  <arg name="meas_gate"     default="false"/>   <!-- M8b: gate on the EKF's heading input -->
+  <arg name="meas_myr"      default="1.234"/>   <!-- same budget as the node-side gate -->
+  <arg name="imu0_topic"    default="/rtk_heading_imu"/>   <!-- run_one_m8b.sh passes /rtk_heading_gated when meas_gate:=true -->
+
+  <param name="use_sim_time" value="true"/>
+
+  <!-- base_link -> gps : the lever arm of rtk_odom.launch (2026-08-14 survey) -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="bl_to_gps"
+        args="0.235 -0.280 -0.175 0 0 0 base_link gps"/>
+
+  <node pkg="rosbag" type="play" name="player" output="log" required="true"
+        args="--clock --hz=1000 -r $(arg rate) -s $(arg start) -u $(arg duration) -q
+              --topics /rtk_odom /ch110/data_raw /odom -- $(arg bag)"/>
+
+  <node pkg="robot_localization" type="m8_republish.py" name="m8_republish" output="log">
+    <param name="origin_file"  value="$(arg origin_file)"/>
+    <param name="events_file"  value="$(arg events_file)"/>
+    <param name="inject"       value="$(arg inject)"/>
+    <param name="heading_log"  value="$(arg out_dir)/heading.csv"/>
+    <param name="lever_arm_x"  value="0.235"/>
+    <param name="lever_arm_y"  value="-0.280"/>
+    <param name="lever_arm_z"  value="-0.175"/>
+  </node>
+
+  <!-- M8b measurement-side gate: /rtk_heading_imu -> [gate.gate_series_v3] -> /rtk_heading_gated.
+       Same parameters as the patched navsat_transform of the GATED arm. -->
+  <node if="$(arg meas_gate)" pkg="robot_localization" type="m8b_gate_node.py"
+        name="m8b_gate" output="log">
+    <remap from="heading_in"  to="/rtk_heading_imu"/>
+    <remap from="gyro_in"     to="/ch110_imu"/>
+    <remap from="heading_out" to="/rtk_heading_gated"/>
+    <param name="log"               value="$(arg out_dir)/meas_gate.csv"/>
+    <param name="max_yaw_rate"      value="$(arg meas_myr)"/>
+    <param name="yaw_gate_margin"   value="0.05"/>
+    <param name="nominal_dt"        value="0.2"/>
+    <param name="max_hold_frames"   value="5"/>
+    <param name="max_gap_frames"    value="3"/>
+    <param name="use_gyro"          value="true"/>
+    <param name="gyro_drift_rate"   value="0.002"/>
+    <param name="max_gyro_ref_time" value="10.0"/>
+  </node>
+
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf" clear_params="true">
+    <param name="frequency"         value="30"/>
+    <param name="sensor_timeout"    value="0.5"/>
+    <param name="two_d_mode"        value="true"/>
+    <param name="publish_tf"        value="true"/>
+    <param name="map_frame"         value="map"/>
+    <param name="odom_frame"        value="odom"/>
+    <param name="base_link_frame"   value="base_link"/>
+    <param name="world_frame"       value="odom"/>
+
+    <!-- wheel odometry: vx and vyaw -->
+    <param name="odom0" value="/odom"/>
+    <rosparam param="odom0_config">[false, false, false,
+                                    false, false, false,
+                                    true,  false, false,
+                                    false, false, true,
+                                    false, false, false]</rosparam>
+    <param name="odom0_differential" value="false"/>
+    <param name="odom0_relative"     value="false"/>
+    <param name="odom0_queue_size"   value="20"/>
+
+    <!-- RTK heading: absolute yaw, 5 Hz. This is the stream under test. -->
+    <param name="imu0" value="$(arg imu0_topic)"/>
+    <rosparam param="imu0_config">[false, false, false,
+                                   false, false, true,
+                                   false, false, false,
+                                   false, false, false,
+                                   false, false, false]</rosparam>
+    <param name="imu0_differential" value="false"/>
+    <param name="imu0_relative"     value="false"/>
+    <param name="imu0_queue_size"   value="20"/>
+    <param name="imu0_remove_gravitational_acceleration" value="true"/>
+    <param name="imu0_pose_rejection_threshold" value="$(arg mahal)"/>
+
+    <!-- CH110 yaw rate, ~93 Hz -->
+    <param name="imu1" value="/ch110_imu"/>
+    <rosparam param="imu1_config">[false, false, false,
+                                   false, false, false,
+                                   false, false, false,
+                                   false, false, true,
+                                   false, false, false]</rosparam>
+    <param name="imu1_differential" value="false"/>
+    <param name="imu1_relative"     value="false"/>
+    <param name="imu1_queue_size"   value="60"/>
+    <param name="imu1_remove_gravitational_acceleration" value="true"/>
+
+    <rosparam param="process_noise_covariance" subst_value="true">[
+      0.05, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0.05, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0.06, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0.03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0.03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, $(arg yaw_pnc), 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0.025, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0.025, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0.04, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.02, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.015]</rosparam>
+  </node>
+
+  <node pkg="robot_localization" type="navsat_transform_node" name="navsat" clear_params="true">
+    <remap from="imu/data"          to="/navsat_imu"/>
+    <remap from="gps/fix"           to="/gps/fix"/>
+    <remap from="odometry/filtered" to="/odometry/filtered"/>
+    <param name="frequency"                  value="10"/>
+    <param name="delay"                      value="0.0"/>
+    <param name="magnetic_declination_radians" value="0.0"/>
+    <param name="yaw_offset"                 value="0.0"/>
+    <param name="zero_altitude"              value="true"/>
+    <param name="broadcast_cartesian_transform" value="false"/>
+    <param name="publish_filtered_gps"       value="false"/>
+    <param name="use_odometry_yaw"           value="false"/>
+    <!-- a fixed datum: without it the cartesian->world rotation is taken from the
+         filter at whatever instant the first fix lands, which is not reproducible -->
+    <param name="use_local_cartesian"        value="true"/>
+    <param name="wait_for_datum"             value="true"/>
+    <rosparam param="datum" subst_value="true">[$(arg datum_lat), $(arg datum_lon), 0.0]</rosparam>
+
+    <!-- heading-continuity gate (patched build only; ignored by the stock build).
+         max_yaw_rate 1.234 rad/s and nominal_dt 0.2 s give the manuscript's
+         g = 1.234*0.2 + 0.05 = 0.2968 rad = 17.0 deg per frame. -->
+    <param name="max_yaw_rate"      value="$(arg max_yaw_rate)"/>
+    <param name="yaw_gate_margin"   value="0.05"/>
+    <param name="nominal_dt"        value="0.2"/>
+    <param name="max_hold_frames"   value="5"/>
+    <param name="max_gap_frames"    value="3"/>
+    <param name="use_gyro"          value="$(arg gate)"/>
+    <param name="gyro_drift_rate"   value="0.002"/>
+    <param name="max_gyro_ref_time" value="10.0"/>
+  </node>
+
+  <node pkg="robot_localization" type="m8_recorder.py" name="m8_recorder" output="log">
+    <param name="out_dir" value="$(arg out_dir)"/>
+  </node>
+</launch>

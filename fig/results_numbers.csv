@@ -1,0 +1,943 @@
+group,quantity,value,unit,definition
+anomaly,overlapping recordings: orchard3src_20260826_2026-08-26-10-02-59 / orchard_20260826_2026-08-26-08-31-44,14.0,min,"both files carry /rtk_odom frames stamped 2026-08-26 08:31:44.362 to 2026-08-26 08:45:44.175. Recordings whose time stamps duplicate another recording are replays, not independent data; the replay (orchard3src_20260826_2026-08-26-10-02-59, whose file name claims a later recording time than its own frames) is excluded from every statistic in this file."
+corpus,bags excluded as replays,1,bag,orchard3src_20260826_2026-08-26-10-02-59
+corpus,frames excluded as replays,4200,frame,0.23 h of duplicated content
+physical_bound,gyro samples,326746,frame,frames with a CH110 |omega_z| envelope (max |omega_z| over the frame interval)
+physical_bound,non-physical gyro frames,3,frame,"|omega_z| > 5 rad/s (286 deg/s); dropped, same rule as data/post_summary.py"
+physical_bound,non-physical gyro max,57099747.238,rad/s,"largest raw CH110 envelope in the corpus, before the rule above"
+physical_bound,omega_z p99,0.6605,rad/s,after dropping non-physical samples
+physical_bound,bound p99,7.5688,deg/frame,|omega_z| x 0.2 s: the largest heading change the platform can produce in one frame
+physical_bound,omega_z p99.9,1.0836,rad/s,after dropping non-physical samples
+physical_bound,bound p99.9,12.4166,deg/frame,|omega_z| x 0.2 s: the largest heading change the platform can produce in one frame
+physical_bound,omega_z max,1.4537,rad/s,after dropping non-physical samples
+physical_bound,bound max,16.6582,deg/frame,|omega_z| x 0.2 s: the largest heading change the platform can produce in one frame
+physical_bound,frames above the max bound,205,frame,|dpsi| > 16.658 deg/frame: physically impossible in one 5 Hz frame
+physical_bound,P(|dpsi| > max bound),0.06274,%,of the 326743 increments with a usable gyro envelope
+physical_bound,frames above their own gyro envelope + margin,3025,frame,"|dpsi| > |omega_z|_frame x 0.2 s + 2.86 deg (the deployed yaw_gate_margin, standing for heading noise); without the margin the comparison is dominated by the noise floor, since the median increment already exceeds what the gyro shows on a standing vehicle"
+physical_bound,P(above own envelope + margin),0.9258,%,
+corpus,bags,47,bag,"recordings with a /rtk_odom stream, after excluding replays"
+corpus,frames,364916,frame,total /rtk_odom frames (5 Hz)
+corpus,hours,20.3155,h,sum of per-bag /rtk_odom span (last minus first frame)
+corpus,fixed_frames,341445,frame,frames whose nearest /rtk/status (within 1.5 s) reports a fixed solution
+corpus,fixed_hours,18.9692,h,fixed_frames x 0.2 s
+corpus,fixed_share,93.57,%,fixed_frames / frames
+corpus,bags_with_rtk_fix,5,bag,bags recording /rtk/fix (raw ANT1 lat/lon); /rtk/fix joined the recording list 2026-09-10
+corpus,bags_with_ch110,40,bag,"bags recording /ch110/data_raw (IMU, ~85-100 Hz)"
+corpus,frames_with_imu,331679,frame,usable increments that also carry an IMU-integrated increment
+corpus_by_site,concrete yard bags,32,bag,site from the median ENU position
+corpus_by_site,concrete yard hours,11.9069,h,
+corpus_by_site,concrete yard frames,214332,frame,
+corpus_by_site,concrete yard fixed frames,210183,frame,
+corpus_by_site,concrete yard fixed hours,11.6768,h,
+corpus_by_site,concrete yard bags with /rtk/fix,4,bag,
+corpus_by_site,concrete yard bags with /ch110/data_raw,25,bag,
+corpus_by_site,greenhouse bags,5,bag,site from the median ENU position
+corpus_by_site,greenhouse hours,4.1618,h,
+corpus_by_site,greenhouse frames,74161,frame,
+corpus_by_site,greenhouse fixed frames,57029,frame,
+corpus_by_site,greenhouse fixed hours,3.1683,h,
+corpus_by_site,greenhouse bags with /rtk/fix,0,bag,
+corpus_by_site,greenhouse bags with /ch110/data_raw,5,bag,
+corpus_by_site,orchard bags,10,bag,site from the median ENU position
+corpus_by_site,orchard hours,4.2468,h,
+corpus_by_site,orchard frames,76423,frame,
+corpus_by_site,orchard fixed frames,74233,frame,
+corpus_by_site,orchard fixed hours,4.1241,h,
+corpus_by_site,orchard bags with /rtk/fix,1,bag,
+corpus_by_site,orchard bags with /ch110/data_raw,10,bag,
+corpus,imu rate median,98.3,Hz,"per-bag /ch110/data_raw sample rate over the 40 bags that carry it; nominal 100 Hz (equipment table of the field handbook, not distributed), mean 95.33 Hz, range 46.6-148.1 Hz"
+corpus,odom rate median,5.0,Hz,per-bag /rtk_odom rate; the nominal 5 Hz of Table 1
+corpus,first frame,2026-08-19,date,"wall-clock date of the earliest /rtk_odom frame in the corpus, after the replay exclusion"
+corpus,last frame,2026-09-12,date,wall-clock date of the latest /rtk_odom frame in the corpus
+corpus,frames_dropped_first,47,frame,first frame of each bag (no increment)
+corpus,frames_dropped_no_heading,64,frame,"increments touching a frame with cov[35] >= 1e5 (no heading, published yaw = 0)"
+corpus,frames_dropped_dt_gap,6,frame,increments spanning dt > 0.5 s
+corpus,increments_used,364799,frame,frames entering the increment statistics
+increments,all n,364799,frame,
+increments,all RMS,2.1996,deg,root mean square of |dpsi|
+increments,all P(>5 deg),3.187509,%,exceedance probability
+increments,all count >5 deg,11628,frame,
+increments,all P(>10 deg),0.350056,%,exceedance probability
+increments,all count >10 deg,1277,frame,
+increments,all P(>20 deg),0.044956,%,exceedance probability
+increments,all count >20 deg,164,frame,
+increments,all P(>45 deg),0.016173,%,exceedance probability
+increments,all count >45 deg,59,frame,
+increments,all P(>90 deg),0.006305,%,exceedance probability
+increments,all count >90 deg,23,frame,
+increments,all P(> max bound 16.66 deg),0.060581,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments,all count > max bound 16.66 deg,221,frame,increments that cannot be a turn of this vehicle
+increments,"all P(> Delta_min 48.5 deg, T=0.30 m)",0.015077,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments,"all count > Delta_min 48.5 deg, T=0.30 m",55,frame,
+increments,"all P(> Delta_min 86.3 deg, T=0.50 m)",0.006579,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments,"all count > Delta_min 86.3 deg, T=0.50 m",24,frame,
+increments,all median,0.28,deg,secondary
+increments,all p90,2.3599,deg,secondary
+increments,all p99,7.1774,deg,secondary
+increments,all p99.9,13.4259,deg,secondary
+increments,all max,178.8736,deg,secondary
+increments,straight n,140163,frame,
+increments,straight RMS,2.0158,deg,root mean square of |dpsi|
+increments,straight P(>5 deg),0.789795,%,exceedance probability
+increments,straight count >5 deg,1107,frame,
+increments,straight P(>10 deg),0.192633,%,exceedance probability
+increments,straight count >10 deg,270,frame,
+increments,straight P(>20 deg),0.065638,%,exceedance probability
+increments,straight count >20 deg,92,frame,
+increments,straight P(>45 deg),0.024971,%,exceedance probability
+increments,straight count >45 deg,35,frame,
+increments,straight P(>90 deg),0.010702,%,exceedance probability
+increments,straight count >90 deg,15,frame,
+increments,straight P(> max bound 16.66 deg),0.085615,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments,straight count > max bound 16.66 deg,120,frame,increments that cannot be a turn of this vehicle
+increments,"straight P(> Delta_min 48.5 deg, T=0.30 m)",0.022117,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments,"straight count > Delta_min 48.5 deg, T=0.30 m",31,frame,
+increments,"straight P(> Delta_min 86.3 deg, T=0.50 m)",0.010702,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments,"straight count > Delta_min 86.3 deg, T=0.50 m",15,frame,
+increments,straight median,0.2823,deg,secondary
+increments,straight p90,0.985,deg,secondary
+increments,straight p99,4.6983,deg,secondary
+increments,straight p99.9,15.1926,deg,secondary
+increments,straight max,178.8736,deg,secondary
+increments,turn n,29881,frame,
+increments,turn RMS,4.629,deg,root mean square of |dpsi|
+increments,turn P(>5 deg),19.132559,%,exceedance probability
+increments,turn count >5 deg,5717,frame,
+increments,turn P(>10 deg),2.349319,%,exceedance probability
+increments,turn count >10 deg,702,frame,
+increments,turn P(>20 deg),0.140558,%,exceedance probability
+increments,turn count >20 deg,42,frame,
+increments,turn P(>45 deg),0.040159,%,exceedance probability
+increments,turn count >45 deg,12,frame,
+increments,turn P(>90 deg),0.02008,%,exceedance probability
+increments,turn count >90 deg,6,frame,
+increments,turn P(> max bound 16.66 deg),0.194103,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments,turn count > max bound 16.66 deg,58,frame,increments that cannot be a turn of this vehicle
+increments,"turn P(> Delta_min 48.5 deg, T=0.30 m)",0.040159,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments,"turn count > Delta_min 48.5 deg, T=0.30 m",12,frame,
+increments,"turn P(> Delta_min 86.3 deg, T=0.50 m)",0.023426,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments,"turn count > Delta_min 86.3 deg, T=0.50 m",7,frame,
+increments,turn median,2.1132,deg,secondary
+increments,turn p90,6.3902,deg,secondary
+increments,turn p99,12.1495,deg,secondary
+increments,turn p99.9,25.4515,deg,secondary
+increments,turn max,168.2874,deg,secondary
+increments,slow n,172236,frame,
+increments,slow RMS,1.7406,deg,root mean square of |dpsi|
+increments,slow P(>5 deg),2.633015,%,exceedance probability
+increments,slow count >5 deg,4535,frame,
+increments,slow P(>10 deg),0.11612,%,exceedance probability
+increments,slow count >10 deg,200,frame,
+increments,slow P(>20 deg),0.017418,%,exceedance probability
+increments,slow count >20 deg,30,frame,
+increments,slow P(>45 deg),0.006967,%,exceedance probability
+increments,slow count >45 deg,12,frame,
+increments,slow P(>90 deg),0.001161,%,exceedance probability
+increments,slow count >90 deg,2,frame,
+increments,slow P(> max bound 16.66 deg),0.024966,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments,slow count > max bound 16.66 deg,43,frame,increments that cannot be a turn of this vehicle
+increments,"slow P(> Delta_min 48.5 deg, T=0.30 m)",0.006967,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments,"slow count > Delta_min 48.5 deg, T=0.30 m",12,frame,
+increments,"slow P(> Delta_min 86.3 deg, T=0.50 m)",0.001161,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments,"slow count > Delta_min 86.3 deg, T=0.50 m",2,frame,
+increments,slow median,0.2394,deg,secondary
+increments,slow p90,2.2462,deg,secondary
+increments,slow p99,5.4436,deg,secondary
+increments,slow p99.9,10.6529,deg,secondary
+increments,slow max,167.5083,deg,secondary
+increments,na n,22519,frame,
+increments,na RMS,1.2157,deg,root mean square of |dpsi|
+increments,na P(>5 deg),1.194547,%,exceedance probability
+increments,na count >5 deg,269,frame,
+increments,na P(>10 deg),0.466273,%,exceedance probability
+increments,na count >10 deg,105,frame,
+increments,na P(>20 deg),0.0,%,exceedance probability
+increments,na count >20 deg,0,frame,
+increments,na P(>45 deg),0.0,%,exceedance probability
+increments,na count >45 deg,0,frame,
+increments,na P(>90 deg),0.0,%,exceedance probability
+increments,na count >90 deg,0,frame,
+increments,na P(> max bound 16.66 deg),0.0,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments,na count > max bound 16.66 deg,0,frame,increments that cannot be a turn of this vehicle
+increments,"na P(> Delta_min 48.5 deg, T=0.30 m)",0.0,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments,"na count > Delta_min 48.5 deg, T=0.30 m",0,frame,
+increments,"na P(> Delta_min 86.3 deg, T=0.50 m)",0.0,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments,"na count > Delta_min 86.3 deg, T=0.50 m",0,frame,
+increments,na median,0.211,deg,secondary
+increments,na p90,0.9711,deg,secondary
+increments,na p99,6.178,deg,secondary
+increments,na p99.9,12.1021,deg,secondary
+increments,na max,13.8241,deg,secondary
+increments_cls_rtk,straight n,144787,frame,
+increments_cls_rtk,straight RMS,1.069,deg,root mean square of |dpsi|
+increments_cls_rtk,straight P(>5 deg),0.504189,%,exceedance probability
+increments_cls_rtk,straight count >5 deg,730,frame,
+increments_cls_rtk,straight P(>10 deg),0.060779,%,exceedance probability
+increments_cls_rtk,straight count >10 deg,88,frame,
+increments_cls_rtk,straight P(>20 deg),0.014504,%,exceedance probability
+increments_cls_rtk,straight count >20 deg,21,frame,
+increments_cls_rtk,straight P(>45 deg),0.002072,%,exceedance probability
+increments_cls_rtk,straight count >45 deg,3,frame,
+increments_cls_rtk,straight P(>90 deg),0.000691,%,exceedance probability
+increments_cls_rtk,straight count >90 deg,1,frame,
+increments_cls_rtk,straight P(> max bound 16.66 deg),0.017957,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments_cls_rtk,straight count > max bound 16.66 deg,26,frame,increments that cannot be a turn of this vehicle
+increments_cls_rtk,"straight P(> Delta_min 48.5 deg, T=0.30 m)",0.001381,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments_cls_rtk,"straight count > Delta_min 48.5 deg, T=0.30 m",2,frame,
+increments_cls_rtk,"straight P(> Delta_min 86.3 deg, T=0.50 m)",0.000691,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments_cls_rtk,"straight count > Delta_min 86.3 deg, T=0.50 m",1,frame,
+increments_cls_rtk,straight median,0.2767,deg,secondary
+increments_cls_rtk,straight p90,0.925,deg,secondary
+increments_cls_rtk,straight p99,4.3203,deg,secondary
+increments_cls_rtk,straight p99.9,7.9849,deg,secondary
+increments_cls_rtk,straight max,146.2451,deg,secondary
+increments_cls_rtk,turn n,24169,frame,
+increments_cls_rtk,turn RMS,6.0472,deg,root mean square of |dpsi|
+increments_cls_rtk,turn P(>5 deg),14.369647,%,exceedance probability
+increments_cls_rtk,turn count >5 deg,3473,frame,
+increments_cls_rtk,turn P(>10 deg),2.747321,%,exceedance probability
+increments_cls_rtk,turn count >10 deg,664,frame,
+increments_cls_rtk,turn P(>20 deg),0.446853,%,exceedance probability
+increments_cls_rtk,turn count >20 deg,108,frame,
+increments_cls_rtk,turn P(>45 deg),0.190326,%,exceedance probability
+increments_cls_rtk,turn count >45 deg,46,frame,
+increments_cls_rtk,turn P(>90 deg),0.091026,%,exceedance probability
+increments_cls_rtk,turn count >90 deg,22,frame,
+increments_cls_rtk,turn P(> max bound 16.66 deg),0.591667,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments_cls_rtk,turn count > max bound 16.66 deg,143,frame,increments that cannot be a turn of this vehicle
+increments_cls_rtk,"turn P(> Delta_min 48.5 deg, T=0.30 m)",0.186189,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments_cls_rtk,"turn count > Delta_min 48.5 deg, T=0.30 m",45,frame,
+increments_cls_rtk,"turn P(> Delta_min 86.3 deg, T=0.50 m)",0.095163,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments_cls_rtk,"turn count > Delta_min 86.3 deg, T=0.50 m",23,frame,
+increments_cls_rtk,turn median,1.1929,deg,secondary
+increments_cls_rtk,turn p90,6.2704,deg,secondary
+increments_cls_rtk,turn p99,13.0658,deg,secondary
+increments_cls_rtk,turn p99.9,79.2568,deg,secondary
+increments_cls_rtk,turn max,178.8736,deg,secondary
+increments_cls_rtk,slow n,195169,frame,
+increments_cls_rtk,slow RMS,1.9109,deg,root mean square of |dpsi|
+increments_cls_rtk,slow P(>5 deg),3.801321,%,exceedance probability
+increments_cls_rtk,slow count >5 deg,7419,frame,
+increments_cls_rtk,slow P(>10 deg),0.265923,%,exceedance probability
+increments_cls_rtk,slow count >10 deg,519,frame,
+increments_cls_rtk,slow P(>20 deg),0.017421,%,exceedance probability
+increments_cls_rtk,slow count >20 deg,34,frame,
+increments_cls_rtk,slow P(>45 deg),0.004611,%,exceedance probability
+increments_cls_rtk,slow count >45 deg,9,frame,
+increments_cls_rtk,slow P(>90 deg),0.0,%,exceedance probability
+increments_cls_rtk,slow count >90 deg,0,frame,
+increments_cls_rtk,slow P(> max bound 16.66 deg),0.026131,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments_cls_rtk,slow count > max bound 16.66 deg,51,frame,increments that cannot be a turn of this vehicle
+increments_cls_rtk,"slow P(> Delta_min 48.5 deg, T=0.30 m)",0.004099,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments_cls_rtk,"slow count > Delta_min 48.5 deg, T=0.30 m",8,frame,
+increments_cls_rtk,"slow P(> Delta_min 86.3 deg, T=0.50 m)",0.0,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments_cls_rtk,"slow count > Delta_min 86.3 deg, T=0.50 m",0,frame,
+increments_cls_rtk,slow median,0.2503,deg,secondary
+increments_cls_rtk,slow p90,3.7879,deg,secondary
+increments_cls_rtk,slow p99,6.2009,deg,secondary
+increments_cls_rtk,slow p99.9,12.2996,deg,secondary
+increments_cls_rtk,slow max,70.5975,deg,secondary
+increments_cls_rtk,na n,674,frame,
+increments_cls_rtk,na RMS,2.1108,deg,root mean square of |dpsi|
+increments_cls_rtk,na P(>5 deg),0.890208,%,exceedance probability
+increments_cls_rtk,na count >5 deg,6,frame,
+increments_cls_rtk,na P(>10 deg),0.890208,%,exceedance probability
+increments_cls_rtk,na count >10 deg,6,frame,
+increments_cls_rtk,na P(>20 deg),0.148368,%,exceedance probability
+increments_cls_rtk,na count >20 deg,1,frame,
+increments_cls_rtk,na P(>45 deg),0.148368,%,exceedance probability
+increments_cls_rtk,na count >45 deg,1,frame,
+increments_cls_rtk,na P(>90 deg),0.0,%,exceedance probability
+increments_cls_rtk,na count >90 deg,0,frame,
+increments_cls_rtk,na P(> max bound 16.66 deg),0.148368,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments_cls_rtk,na count > max bound 16.66 deg,1,frame,increments that cannot be a turn of this vehicle
+increments_cls_rtk,"na P(> Delta_min 48.5 deg, T=0.30 m)",0.0,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments_cls_rtk,"na count > Delta_min 48.5 deg, T=0.30 m",0,frame,
+increments_cls_rtk,"na P(> Delta_min 86.3 deg, T=0.50 m)",0.0,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments_cls_rtk,"na count > Delta_min 86.3 deg, T=0.50 m",0,frame,
+increments_cls_rtk,na median,0.1764,deg,secondary
+increments_cls_rtk,na p90,0.5346,deg,secondary
+increments_cls_rtk,na p99,3.4376,deg,secondary
+increments_cls_rtk,na p99.9,23.9768,deg,secondary
+increments_cls_rtk,na max,46.9329,deg,secondary
+increments,definition,|wrap(psi_k - psi_(k-1))|,,"psi from the /rtk_odom quaternion, heading = 90 deg - yaw; one 5 Hz frame apart; cls_imu = IMU-only straight/turn label (|integrated gyro yaw| over the trailing 3 s window < 5 deg -> straight, else turn; 'na' = bag without IMU or first 3 s)"
+pseudo_step,candidate frames,144642,frame,fixed solution (status 4) AND cov[35] < 1e5 (driver had a heading) AND |dp_ant| <= 0.02 m (the reconstructed ANT1 point did not move)
+pseudo_step,count >=0.05 m,98,frame,candidate frames whose published position moved at least 0.05 m
+pseudo_step,rate >=0.05 m,5.1663,1/h,per hour of fixed solution in the corpus
+pseudo_step,|dpsi| min >=0.05 m,5.4316,deg,
+pseudo_step,|dpsi| max >=0.05 m,167.5083,deg,
+pseudo_step,|dpsi| median >=0.05 m,13.2809,deg,
+pseudo_step,residual RMS >=0.05 m,0.0076,m,"residual = dp_pub - 2|L| sin(|dpsi|/2), the verification of eq. (2)"
+pseudo_step,residual max |.| >=0.05 m,0.0186,m,
+pseudo_step,residual median >=0.05 m,-0.0008,m,
+pseudo_step,fraction within 0.02 m >=0.05 m,100.0,%,frames whose observed step matches eq. (2) to better than 0.02 m
+pseudo_step,caught by cross-track 0.30 m >=0.05 m,7,frame,"|c| from eq. (3) with theta in the PRE-jump body frame, vs the deployed 0.30 m"
+pseudo_step,caught by norm 0.50 m >=0.05 m,2,frame,vs the deployed 0.50 m norm threshold
+pseudo_step,caught by cross-track 0.30 m (post-jump frame) >=0.05 m,5,frame,"same test with extract_p2.py's `across` column (post-jump yaw), for comparison"
+pseudo_step,count >=0.10 m,36,frame,candidate frames whose published position moved at least 0.10 m
+pseudo_step,rate >=0.10 m,1.8978,1/h,per hour of fixed solution in the corpus
+pseudo_step,|dpsi| min >=0.10 m,16.5971,deg,
+pseudo_step,|dpsi| max >=0.10 m,167.5083,deg,
+pseudo_step,|dpsi| median >=0.10 m,28.5414,deg,
+pseudo_step,residual RMS >=0.10 m,0.0072,m,"residual = dp_pub - 2|L| sin(|dpsi|/2), the verification of eq. (2)"
+pseudo_step,residual max |.| >=0.10 m,0.0176,m,
+pseudo_step,residual median >=0.10 m,-0.0009,m,
+pseudo_step,fraction within 0.02 m >=0.10 m,100.0,%,frames whose observed step matches eq. (2) to better than 0.02 m
+pseudo_step,caught by cross-track 0.30 m >=0.10 m,7,frame,"|c| from eq. (3) with theta in the PRE-jump body frame, vs the deployed 0.30 m"
+pseudo_step,caught by norm 0.50 m >=0.10 m,2,frame,vs the deployed 0.50 m norm threshold
+pseudo_step,caught by cross-track 0.30 m (post-jump frame) >=0.10 m,5,frame,"same test with extract_p2.py's `across` column (post-jump yaw), for comparison"
+pseudo_step,count >=0.20 m,17,frame,candidate frames whose published position moved at least 0.20 m
+pseudo_step,rate >=0.20 m,0.8962,1/h,per hour of fixed solution in the corpus
+pseudo_step,|dpsi| min >=0.20 m,32.4422,deg,
+pseudo_step,|dpsi| max >=0.20 m,167.5083,deg,
+pseudo_step,|dpsi| median >=0.20 m,59.1505,deg,
+pseudo_step,residual RMS >=0.20 m,0.0067,m,"residual = dp_pub - 2|L| sin(|dpsi|/2), the verification of eq. (2)"
+pseudo_step,residual max |.| >=0.20 m,0.0176,m,
+pseudo_step,residual median >=0.20 m,-0.0008,m,
+pseudo_step,fraction within 0.02 m >=0.20 m,100.0,%,frames whose observed step matches eq. (2) to better than 0.02 m
+pseudo_step,caught by cross-track 0.30 m >=0.20 m,7,frame,"|c| from eq. (3) with theta in the PRE-jump body frame, vs the deployed 0.30 m"
+pseudo_step,caught by norm 0.50 m >=0.20 m,2,frame,vs the deployed 0.50 m norm threshold
+pseudo_step,caught by cross-track 0.30 m (post-jump frame) >=0.20 m,5,frame,"same test with extract_p2.py's `across` column (post-jump yaw), for comparison"
+pseudo_step,count >=0.30 m,13,frame,candidate frames whose published position moved at least 0.30 m
+pseudo_step,rate >=0.30 m,0.6853,1/h,per hour of fixed solution in the corpus
+pseudo_step,|dpsi| min >=0.30 m,50.4774,deg,
+pseudo_step,|dpsi| max >=0.30 m,167.5083,deg,
+pseudo_step,|dpsi| median >=0.30 m,64.9576,deg,
+pseudo_step,residual RMS >=0.30 m,0.0073,m,"residual = dp_pub - 2|L| sin(|dpsi|/2), the verification of eq. (2)"
+pseudo_step,residual max |.| >=0.30 m,0.0176,m,
+pseudo_step,residual median >=0.30 m,-0.0008,m,
+pseudo_step,fraction within 0.02 m >=0.30 m,100.0,%,frames whose observed step matches eq. (2) to better than 0.02 m
+pseudo_step,caught by cross-track 0.30 m >=0.30 m,7,frame,"|c| from eq. (3) with theta in the PRE-jump body frame, vs the deployed 0.30 m"
+pseudo_step,caught by norm 0.50 m >=0.30 m,2,frame,vs the deployed 0.50 m norm threshold
+pseudo_step,caught by cross-track 0.30 m (post-jump frame) >=0.30 m,5,frame,"same test with extract_p2.py's `across` column (post-jump yaw), for comparison"
+pseudo_step,count >=0.50 m,2,frame,candidate frames whose published position moved at least 0.50 m
+pseudo_step,rate >=0.50 m,0.1054,1/h,per hour of fixed solution in the corpus
+pseudo_step,|dpsi| min >=0.50 m,117.1931,deg,
+pseudo_step,|dpsi| max >=0.50 m,167.5083,deg,
+pseudo_step,|dpsi| median >=0.50 m,142.3507,deg,
+pseudo_step,residual RMS >=0.50 m,0.0124,m,"residual = dp_pub - 2|L| sin(|dpsi|/2), the verification of eq. (2)"
+pseudo_step,residual max |.| >=0.50 m,0.0176,m,
+pseudo_step,residual median >=0.50 m,0.0086,m,
+pseudo_step,fraction within 0.02 m >=0.50 m,100.0,%,frames whose observed step matches eq. (2) to better than 0.02 m
+pseudo_step,caught by cross-track 0.30 m >=0.50 m,2,frame,"|c| from eq. (3) with theta in the PRE-jump body frame, vs the deployed 0.30 m"
+pseudo_step,caught by norm 0.50 m >=0.50 m,2,frame,vs the deployed 0.50 m norm threshold
+pseudo_step,caught by cross-track 0.30 m (post-jump frame) >=0.50 m,1,frame,"same test with extract_p2.py's `across` column (post-jump yaw), for comparison"
+pseudo_step,bags carrying >=0.10 m frames,8,bag,
+pseudo_step_by_bag,top1 run_20260906_2026-09-06-15-26-15,15,frame,site greenhouse; 0.79 fixed h; 18.90 frames per fixed hour
+pseudo_step_by_bag,top2 run_20260828_2026-08-28-10-16-47,7,frame,site greenhouse; 1.00 fixed h; 6.98 frames per fixed hour
+pseudo_step_by_bag,top3 run_20260907_2026-09-07-13-15-11,4,frame,site concrete yard; 1.05 fixed h; 3.83 frames per fixed hour
+pseudo_step_by_bag,top4 run_20260829_2026-08-29-09-12-05,4,frame,site greenhouse; 0.75 fixed h; 5.33 frames per fixed hour
+pseudo_step_by_bag,top5 run_20260828_2026-08-28-16-38-15,3,frame,site greenhouse; 0.61 fixed h; 4.91 frames per fixed hour
+pseudo_step_by_site,concrete yard >=0.10 m,6,frame,
+pseudo_step_by_site,concrete yard per fixed hour,0.5138,1/h,11.68 fixed h at this site
+pseudo_step_by_site,greenhouse >=0.10 m,29,frame,
+pseudo_step_by_site,greenhouse per fixed hour,9.1532,1/h,3.17 fixed h at this site
+pseudo_step_by_site,orchard >=0.10 m,1,frame,
+pseudo_step_by_site,orchard per fixed hour,0.2425,1/h,4.12 fixed h at this site
+rtk_fix_check,bags,5,bag,"bags recording raw /rtk/fix: run_20260910_2026-09-10-16-42-10, run_20260910_2026-09-10-17-55-11, run_20260912_2026-09-12-07-46-55, run_20260912_2026-09-12-13-52-20, run_20260912_2026-09-12-13-58-05"
+rtk_fix_check,frames,74118,frame,increments where both frames have a /rtk/fix sample within 0.15 s
+rtk_fix_check,"corr(dp_fix, dp_ant)",0.988668,-,|dp| of the raw ANT1 lat/lon in ENU vs |dp| of the ANT1 point reconstructed as p_pub + R(yaw) L
+rtk_fix_check,"corr(dp_fix, dp_pub)",0.968568,-,same against the published vehicle point
+rtk_fix_check,"corr(dp_fix, dp_ant) per bag, min",0.983829,-,worst of the 5 bags: run_20260910_2026-09-10-16-42-10
+rtk_fix_check,"corr(dp_fix, dp_ant) per bag, max",0.999665,-,best of the 5 bags: run_20260912_2026-09-12-13-52-20
+rtk_fix_check,median |dp_fix - dp_ant|,0.0,m,all frames; dp_fix is quantised at 0.1 mm by the CSV writer
+rtk_fix_check,p95 |dp_fix - dp_ant|,0.0,m,
+rtk_fix_check,p99.9 |dp_fix - dp_ant|,0.1048,m,
+rtk_fix_check,max |dp_fix - dp_ant|,0.2005,m,worst frame; the tail is timing (nearest /rtk/fix sample accepted within 0.15 s)
+rtk_fix_check,share |dp_fix - dp_ant| below the CSV quantum,99.022,%,"0.1 mm, the resolution the extraction writes"
+rtk_fix_check,median |dp_fix - dp_pub|,0.0015,m,all frames
+rtk_fix_check,frames with |dpsi| > 10 deg,80,frame,
+rtk_fix_check,median |dp_fix - dp_ant| (|dpsi|>10),0.0,m,the reconstruction tracks the raw antenna point through these frames
+rtk_fix_check,median |dp_fix - dp_pub| (|dpsi|>10),0.07055,m,
+rtk_fix_check,median dp_ant (|dpsi|>10),0.0824,m,
+rtk_fix_check,median dp_pub (|dpsi|>10),0.0106,m,
+rtk_fix_check,max |dpsi| in these bags,13.8687,deg,"these bags carry no large heading outlier, so the check validates the reconstruction"
+event1,bag,run_20260906_2026-09-06-15-26-15,,"E3b, second greenhouse, vehicle stationary"
+event1,time,2026-09-06 15:57:03.094,,local time of the frame that carries the step
+event1,dpsi,-67.5415,deg,"one 5 Hz frame, heading 253.2119 -> 185.6704 deg"
+event1,dp_pub,0.4014,m,published position step
+event1,predicted 2|L|sin(|dpsi|/2),0.4064,m,eq. (2)
+event1,residual,-0.005,m,dp_pub - prediction
+event1,dp_ant,0.0107,m,reconstructed ANT1 point over the same frame
+event1,cov35,7.61544e-05,rad^2,heading variance published by the driver
+event1,status,4,-,4 = RTK fixed
+event1,satellites,21,-,from /rtk/status
+event1,differential age,1.0,s,from /rtk/status
+event1,IMU increment,0.0,deg,gyro-integrated heading change over the same frame
+event1,gyro envelope,0.001,rad/s,max |omega_z| over the frame
+event1,cross-track (pre-jump frame),-0.3834,m,eq. (3)
+event1,along-track (pre-jump frame),-0.1209,m,eq. (3)
+event2,bag,run_20260906_2026-09-06-15-26-15,,"E3b, second greenhouse, vehicle stationary"
+event2,time,2026-09-06 15:51:35.628,,local time of the frame that carries the step
+event2,dpsi,-178.8736,deg,"one 5 Hz frame, heading 186.0751 -> 7.2015 deg"
+event2,dp_pub,0.7325,m,published position step
+event2,predicted 2|L|sin(|dpsi|/2),0.7311,m,eq. (2)
+event2,residual,0.0014,m,dp_pub - prediction
+event2,dp_ant,0.1899,m,reconstructed ANT1 point over the same frame
+event2,cov35,7.61544e-05,rad^2,heading variance published by the driver
+event2,status,4,-,4 = RTK fixed
+event2,satellites,15,-,from /rtk/status
+event2,differential age,1.0,s,from /rtk/status
+event2,IMU increment,-0.302,deg,gyro-integrated heading change over the same frame
+event2,gyro envelope,0.0523,rad/s,max |omega_z| over the frame
+event2,cross-track (pre-jump frame),-0.6665,m,eq. (3)
+event2,along-track (pre-jump frame),0.3043,m,eq. (3)
+event2,separation from event1,-327.5,s,negative = earlier; the two events are not in the same 60 s window
+event1,frames with |dpsi| > 20 deg in this bag,37,frame,
+gate,genuine frames,321238,frame,"|wrap(dpsi - dpsi_imu)| <= 2.0 deg: the reported increment agrees with the gyro, so withholding or overriding it is a false gate trip"
+gate,outlier frames,10441,frame,frames with an IMU increment that disagrees by more than 2.0 deg
+gate,genuine frames (straight),135645,frame,
+gate,genuine frames (turn),26594,frame,
+gate,genuine frames (slow),158953,frame,
+gate,pseudo-step frames in the sweep,36,frame,candidate frames with dp_pub >= 0.10 m
+gyro_drift,windows measured,28,window,"60 s windows of contiguous not-turning (v2 straight or slow), fixed-solution frames with a usable gyro, in 5 recordings"
+gyro_drift,median drift,0.01005,deg/s,|gyro-integrated heading change - HDT heading change| / window length
+gyro_drift,median drift (rad/s),0.0001755,rad/s,
+gyro_drift,p90 drift,0.43199,deg/s,
+gyro_drift,max drift,1.43618,deg/s,
+gyro_drift,gyro_drift_rate used,0.002,rad/s,"0.115 deg/s = 6.88 deg per minute withheld; an order of magnitude above the measured median and well below the p90, so the allowance covers MEMS bias without covering a real heading error"
+gyro_drift,seconds to cover a 67.5 deg error at g=17 deg,441.0,s,how long rule (a) would have to stay withheld before the allowance alone could re-anchor onto the 2026-09-06 15:57 heading
+gate,frames without a gyro reference,21918,frame,7 recordings carry no IMU; under rule (a) these frames fall back to rule (b)
+gated_residual,no gate: frames >=0.05 m,100,frame,"the ungated published stream, for reference"
+gated_residual,no gate: episodes >=0.05 m,53,-,frames closer together than 5 s are one episode
+gated_residual,no gate: frames >=0.10 m,36,frame,"the ungated published stream, for reference"
+gated_residual,no gate: episodes >=0.10 m,21,-,frames closer together than 5 s are one episode
+gated_residual,no gate: frames >=0.20 m,17,frame,"the ungated published stream, for reference"
+gated_residual,no gate: episodes >=0.20 m,12,-,frames closer together than 5 s are one episode
+gated_residual,no gate: frames >=0.30 m,12,frame,"the ungated published stream, for reference"
+gated_residual,no gate: episodes >=0.30 m,8,-,frames closer together than 5 s are one episode
+gated_residual,no gate: frames >=0.50 m,2,frame,"the ungated published stream, for reference"
+gated_residual,no gate: episodes >=0.50 m,2,-,frames closer together than 5 s are one episode
+gate,recommended g,17.0,deg,"smallest 1 deg step at or above the measured physical bound 16.66 deg/frame (|omega_z|max x 0.2 s), so no physically possible increment is rejected"
+gate,recommended max_yaw_rate,1.2335,rad/s,with yaw_gate_margin at the deployed 0.05 rad
+gate,recommended yaw_gate_margin,0.05,rad,
+gate,recommended max_hold_frames,5,frame,
+gate,recommended nominal_dt,0.2,s,
+gate,recommended max_gap_frames,3,frame,a reference older than 0.6 s is declared stale
+gate,recommended gyro_drift_rate,0.002,rad/s,rule (a) only; see the gyro_drift group
+gate,recommended rule,v3a (use_gyro = true),,rule (b) is the fallback where no IMU is present
+gate,fixed budget at the recommended gate,0.2967,rad,max_yaw_rate x nominal_dt + yaw_gate_margin = 17.00 deg; v3 never scales it with dt
+gate_v3a,at g=17 deg: false-gate rate (overall),5.328448,%,
+gate_v3b,at g=17 deg: false-gate rate (overall),0.043893,%,
+gate_v2,at g=17 deg: false-gate rate (overall),0.028017,%,
+gate_v3a,"at g=17 deg: false-gate rate, episodes the gyro did not contradict",0.602357,%,
+gate_v3b,"at g=17 deg: false-gate rate, episodes the gyro did not contradict",0.004047,%,
+gate_v2,"at g=17 deg: false-gate rate, episodes the gyro did not contradict",0.001556,%,
+gate_v3a,at g=17 deg: genuine frames inside outlier-triggered outages,15182,frame,
+gate_v3b,at g=17 deg: genuine frames inside outlier-triggered outages,128,frame,
+gate_v2,at g=17 deg: genuine frames inside outlier-triggered outages,85,frame,
+gate_v3a,at g=17 deg: outages,95,-,
+gate_v3b,at g=17 deg: outages,164,-,
+gate_v2,at g=17 deg: outages,534,-,
+gate_v3a,at g=17 deg: outages opened by an outlier,89,-,
+gate_v3b,at g=17 deg: outages opened by an outlier,143,-,
+gate_v2,at g=17 deg: outages opened by an outlier,518,-,
+gate_v3a,at g=17 deg: false-gate rate (straight),1.2776,%,
+gate_v3b,at g=17 deg: false-gate rate (straight),0.048656,%,
+gate_v2,at g=17 deg: false-gate rate (straight),0.030226,%,
+gate_v3a,at g=17 deg: false-gate rate (turn),2.459201,%,
+gate_v3b,at g=17 deg: false-gate rate (turn),0.109047,%,
+gate_v2,at g=17 deg: false-gate rate (turn),0.090246,%,
+gate_v3a,at g=17 deg: genuine frames held or withheld,17117,frame,
+gate_v3b,at g=17 deg: genuine frames held or withheld,141,frame,
+gate_v2,at g=17 deg: genuine frames held or withheld,90,frame,
+gate_v3a,at g=17 deg: genuine frames withheld,17083,frame,
+gate_v3b,at g=17 deg: genuine frames withheld,80,frame,
+gate_v2,at g=17 deg: genuine frames withheld,13,frame,
+gate_v3a,at g=17 deg: outlier frames held or withheld,1560,frame,
+gate_v3b,at g=17 deg: outlier frames held or withheld,242,frame,
+gate_v2,at g=17 deg: outlier frames held or withheld,586,frame,
+gate_v3a,at g=17 deg: frames held,154,frame,
+gate_v3b,at g=17 deg: frames held,262,frame,
+gate_v2,at g=17 deg: frames held,662,frame,
+gate_v3a,at g=17 deg: frames withheld,19466,frame,
+gate_v3b,at g=17 deg: frames withheld,139,frame,
+gate_v2,at g=17 deg: frames withheld,40,frame,
+gate_v3a,at g=17 deg: frames withheld,5.336089,%,
+gate_v3b,at g=17 deg: frames withheld,0.038103,%,
+gate_v2,at g=17 deg: frames withheld,0.010965,%,
+gate_v3a,at g=17 deg: pseudo-step frames caught,25,frame,
+gate_v3b,at g=17 deg: pseudo-step frames caught,31,frame,
+gate_v2,at g=17 deg: pseudo-step frames caught,31,frame,
+gate_v3a,at g=17 deg: pseudo-step frames caught,69.444444,%,
+gate_v3b,at g=17 deg: pseudo-step frames caught,86.111111,%,
+gate_v2,at g=17 deg: pseudo-step frames caught,86.111111,%,
+gate_v3a,at g=17 deg: pseudo-step frames missed,11,frame,
+gate_v3b,at g=17 deg: pseudo-step frames missed,5,frame,
+gate_v2,at g=17 deg: pseudo-step frames missed,5,frame,
+gate_v3a,at g=17 deg: longest hold (any frames),6488,frame,
+gate_v3b,at g=17 deg: longest hold (any frames),8,frame,
+gate_v2,at g=17 deg: longest hold (any frames),12,frame,
+gate_v3a,at g=17 deg: longest hold on genuine frames,2,frame,
+gate_v3b,at g=17 deg: longest hold on genuine frames,1,frame,
+gate_v2,at g=17 deg: longest hold on genuine frames,0,frame,
+gate_v3a,"at g=17 deg: published error during genuine holds, max",0.023519,m,
+gate_v3b,"at g=17 deg: published error during genuine holds, max",0.077886,m,
+gate_v2,"at g=17 deg: published error during genuine holds, max",0.256334,m,
+gate_v3a,"at g=17 deg: published error during genuine holds, RMS",0.006198,m,
+gate_v3b,"at g=17 deg: published error during genuine holds, RMS",0.015519,m,
+gate_v2,"at g=17 deg: published error during genuine holds, RMS",0.062305,m,
+gate_v3a,at g=17 deg: genuine held frames measured,34,frame,
+gate_v3b,at g=17 deg: genuine held frames measured,61,frame,
+gate_v2,at g=17 deg: genuine held frames measured,77,frame,
+gate_v3a,at g=17 deg: event 1 caught,1,-,
+gate_v3b,at g=17 deg: event 1 caught,1,-,
+gate_v2,at g=17 deg: event 1 caught,1,-,
+gate_v3a,at g=17 deg: event 2 caught,1,-,
+gate_v3b,at g=17 deg: event 2 caught,1,-,
+gate_v2,at g=17 deg: event 2 caught,1,-,
+gate_v1,at g=17 deg: false-gate rate (overall),0.030507,%,
+gate_v1,at g=17 deg: pseudo-step frames caught,29,frame,
+gate_v1,at g=17 deg: pseudo-step frames caught,80.555556,%,
+gate_v1,at g=17 deg: event 1 caught,1,-,
+gate_v1,at g=17 deg: event 2 caught,0,-,
+gate_v1,at g=17 deg: longest rejection run on genuine frames,0,frame,
+gate_v3a,at g=17 deg: pseudo-step misses |dpsi|,59.1;52.6;44.5;32.4;25.7;22.4;22.1;19.2;17.4;16.7;16.6,deg,largest first
+gate_v3a,at g=17 deg: re-anchor events,71,frame,frames on which the heading was trusted again
+gate_v3a,at g=17 deg: stale-reference invalidations,73,frame,dt > max_gap_frames x nominal_dt = 0.6 s
+gate_v3b,at g=17 deg: pseudo-step misses |dpsi|,79.9;32.4;29.7;16.7;16.6,deg,largest first
+gate_v3b,at g=17 deg: re-anchor events,124,frame,frames on which the heading was trusted again
+gate_v3b,at g=17 deg: stale-reference invalidations,124,frame,dt > max_gap_frames x nominal_dt = 0.6 s
+gate_v3a,at g=17 deg: frames falling back to rule (b),0,frame,"frames in the 7 IMU-less recordings, where rule (a) has no gyro reference"
+gate,patch default g,8.594,deg,max_yaw_rate 0.5 rad/s x 0.2 s + yaw_gate_margin 0.05 rad
+gate_v3a,at the patch default: false-gate rate,9.200966,%,"nearest swept gate, g = 9 deg"
+gate_v3a,at the patch default: pseudo-step frames caught,83.3333,%,
+gate_v2,at the patch default: false-gate rate,0.610762,%,"nearest swept gate, g = 9 deg"
+gate_v2,at the patch default: pseudo-step frames caught,83.3333,%,
+gate_v1,at the patch default: false-gate rate,0.914898,%,"nearest swept gate, g = 9 deg"
+gate_v1,at the patch default: pseudo-step frames caught,77.7778,%,
+gate_v3a,smallest g with false-gate rate <= 0.1 %,nan,deg,never reached in the swept range
+gate_v3b,smallest g with false-gate rate <= 0.1 %,13.0,deg,
+gate_v1,largest g catching event1,30.0,deg,
+gate_v2,largest g catching event1,30.0,deg,
+gate_v3a,largest g catching event1,30.0,deg,
+gate_v3b,largest g catching event1,30.0,deg,
+gate_v1,largest g catching event2,7.0,deg,
+gate_v2,largest g catching event2,30.0,deg,
+gate_v3a,largest g catching event2,25.0,deg,
+gate_v3b,largest g catching event2,30.0,deg,
+gate_v3a,"at g=17 deg: missed frames, |dpsi| against the previous frame",16.6 - 59.1,deg,the increment that produced the position step
+gate_v3a,"at g=17 deg: missed frames, |dpsi| against the held anchor",0.1 - 16.7,deg,"what the gate actually compares; every one of these is inside the 17 deg budget, so the frame is accepted although the step still happens"
+gate_v3a,"at g=17 deg: missed frames, largest budget faced",18.33,deg,"v3 never scales the budget with dt; the widest value here is the rule (a) gyro allowance, not a dt term"
+gate_v3b,"at g=17 deg: missed frames, |dpsi| against the previous frame",16.6 - 79.9,deg,the increment that produced the position step
+gate_v3b,"at g=17 deg: missed frames, |dpsi| against the held anchor",10.7 - 16.7,deg,"what the gate actually compares; every one of these is inside the 17 deg budget, so the frame is accepted although the step still happens"
+gate_v3b,"at g=17 deg: missed frames, largest budget faced",17.0,deg,"v3 never scales the budget with dt; the widest value here is the rule (a) gyro allowance, not a dt term"
+gate_v3a,at g=17 deg: pseudo-step frames caught >=0.05 m,47,frame,of 98 frames in this size class; caught = the gate held or withheld the frame
+gate_v3a,at g=17 deg: pseudo-step frames missed >=0.05 m,51,frame,
+gate_v3a,at g=17 deg: missed |dpsi| min >=0.05 m,5.4316,deg,
+gate_v3a,at g=17 deg: missed |dpsi| max >=0.05 m,59.0758,deg,
+gate_v3a,at g=17 deg: pseudo-step frames caught >=0.10 m,25,frame,of 36 frames in this size class; caught = the gate held or withheld the frame
+gate_v3a,at g=17 deg: pseudo-step frames missed >=0.10 m,11,frame,
+gate_v3a,at g=17 deg: missed |dpsi| min >=0.10 m,16.5971,deg,
+gate_v3a,at g=17 deg: missed |dpsi| max >=0.10 m,59.0758,deg,
+gate_v3a,at g=17 deg: pseudo-step frames caught >=0.20 m,13,frame,of 17 frames in this size class; caught = the gate held or withheld the frame
+gate_v3a,at g=17 deg: pseudo-step frames missed >=0.20 m,4,frame,
+gate_v3a,at g=17 deg: missed |dpsi| min >=0.20 m,32.4422,deg,
+gate_v3a,at g=17 deg: missed |dpsi| max >=0.20 m,59.0758,deg,
+gate_v3a,at g=17 deg: pseudo-step frames caught >=0.30 m,11,frame,of 13 frames in this size class; caught = the gate held or withheld the frame
+gate_v3a,at g=17 deg: pseudo-step frames missed >=0.30 m,2,frame,
+gate_v3a,at g=17 deg: missed |dpsi| min >=0.30 m,52.555,deg,
+gate_v3a,at g=17 deg: missed |dpsi| max >=0.30 m,59.0758,deg,
+gate_v3a,at g=17 deg: pseudo-step frames caught >=0.50 m,2,frame,of 2 frames in this size class; caught = the gate held or withheld the frame
+gate_v3a,at g=17 deg: pseudo-step frames missed >=0.50 m,0,frame,
+gate_v1,at g=17 deg: hold count entering event 2,5,frame,consecutive rejected frames immediately before event 2
+gate_v1,at g=17 deg: budget at event 2,88.03,deg,"max_yaw_rate * dt-since-last-accepted + yaw_gate_margin, unbounded in v1"
+gate_v1,at g=17 deg: |delta| vs stale anchor at event 2,26.9,deg,clampRotation(yaw - last_accepted_yaw); accepted when it falls inside the budget
+gate_v1,at g=17 deg: event 2 frame rejected,0,-,0 = the outlier was accepted
+gate_v3a,outages longer than 60 s,10,-,runs of consecutive not-accepted frames at the recommended gate
+gate_v3a,frames inside outages longer than 60 s,18225,frame,5.0 % of the corpus; these dominate the raw false-gate rate
+gate_v3a,longest outage,1297.6,s,run_20260828_2026-08-28-10-16-47 from 2026-08-28 10:46:00.611
+gate_v3a_outages,1 run_20260828_2026-08-28-10-16-47 2026-08-28 10:46:00.611,1297.6,s,"6488 frames; opened by a -168.3 deg reported increment the gyro put at 0.08 deg (status 5, dp_pub 0.679 m, dp_ant 0.076 m); median |reported - propagated| during the outage 168.0 deg"
+gate_v3a_outages,2 run_20260906_2026-09-06-15-26-15 2026-09-06 15:37:19.650,827.2,s,"4137 frames; opened by a 110.7 deg reported increment the gyro put at -0.00 deg (status 5, dp_pub 0.602 m, dp_ant 0.001 m); median |reported - propagated| during the outage 111.8 deg"
+gate_v3a_outages,3 run_20260828_2026-08-28-16-38-15 2026-08-28 16:41:39.451,558.7,s,"2793 frames; opened by a -117.2 deg reported increment the gyro put at nan deg (status 4, dp_pub 0.642 m, dp_ant 0.018 m); median |reported - propagated| during the outage 85.3 deg"
+gate_v3a_outages,4 run_20260829_2026-08-29-09-12-05 2026-08-29 09:49:01.650,200.4,s,"1002 frames; opened by a 58.4 deg reported increment the gyro put at 0.86 deg (status 4, dp_pub 0.354 m, dp_ant 0.003 m); median |reported - propagated| during the outage 58.0 deg"
+gate_v3a_outages,5 run_20260906_2026-09-06-15-26-15 2026-09-06 15:57:03.094,192.7,s,"963 frames; opened by a -67.5 deg reported increment the gyro put at 0.00 deg (status 4, dp_pub 0.401 m, dp_ant 0.011 m); median |reported - propagated| during the outage 61.6 deg"
+gate_v3a_outages,6 run_20260829_2026-08-29-09-12-05 2026-08-29 09:27:40.757,180.9,s,"905 frames; opened by a -36.7 deg reported increment the gyro put at 0.00 deg (status 4, dp_pub 0.229 m, dp_ant 0.003 m); median |reported - propagated| during the outage 37.9 deg"
+gate_v3a_drift,gyro_drift_rate = 0.00018 rad/s (0.010 deg/s),15.8428,%,"false-gate rate; 56717 frames withheld, 32 pseudo-steps caught, 5027 s to forgive a 67.5 deg offset"
+gate_v3a_drift,gyro_drift_rate = 0.00200 rad/s (0.115 deg/s),5.3284,%,"false-gate rate; 19466 frames withheld, 25 pseudo-steps caught, 441 s to forgive a 67.5 deg offset"
+gate_v3a_drift,gyro_drift_rate = 0.00754 rad/s (0.432 deg/s),1.7697,%,"false-gate rate; 7455 frames withheld, 25 pseudo-steps caught, 117 s to forgive a 67.5 deg offset"
+gate_v3a_bounded,max_gyro_ref_time = 5 s,12,episodes,"residual pseudo-step episodes >= 0.10 m in the gated output; false-gate 0.2254 %, 1020 frames withheld (0.2796 %), event 1 withheld 5.0 s and re-anchors 0.333 m off"
+gate_v3a_bounded,max_gyro_ref_time = 10 s,9,episodes,"residual pseudo-step episodes >= 0.10 m in the gated output; false-gate 0.3686 %, 1642 frames withheld (0.4501 %), event 1 withheld 10.0 s and re-anchors 0.290 m off"
+gate_v3a_bounded,max_gyro_ref_time = 20 s,8,episodes,"residual pseudo-step episodes >= 0.10 m in the gated output; false-gate 0.5342 %, 2335 frames withheld (0.6401 %), event 1 withheld 20.1 s and re-anchors 0.242 m off"
+gate_v3a_bounded,max_gyro_ref_time = 60 s,7,episodes,"residual pseudo-step episodes >= 0.10 m in the gated output; false-gate 1.1172 %, 4868 frames withheld (1.3344 %), event 1 withheld 60.1 s and re-anchors 0.347 m off"
+gate_v3a_bounded,max_gyro_ref_time = unbounded s,4,episodes,"residual pseudo-step episodes >= 0.10 m in the gated output; false-gate 5.3284 %, 19466 frames withheld (5.3361 %), event 1 withheld 192.7 s and re-anchors 0.242 m off"
+gate_v3a_bounded,chosen max_gyro_ref_time,none qualifies,s,no setting keeps the false-gate rate at or below 0.1 %; rule (b) remains the default
+event1_v3a,last trusted heading before the event,253.21,deg,the anchor the gate was holding when the 67.5 deg step arrived
+event1_v3a,output withheld from,0.4,s,after the event frame; the 5 preceding frames are published with the held heading
+event1_v3a,heading trusted again after,192.66,s,time from the event frame to the first accepted frame
+event1_v3a,frames withheld,961,frame,
+event1_v3a,heading at re-anchor,214.42,deg,
+event1_v3a,true heading at re-anchor,253.14,deg,last trusted heading propagated with the integrated gyro
+event1_v3a,heading error at re-anchor,38.72,deg,
+event1_v3a,published position error at re-anchor,0.2424,m,2|L| sin(heading error / 2): what the vehicle reference point is off by once the gate trusts the heading again
+event1_v3a,gyro allowance at re-anchor,39.1,deg,g + gyro_drift_rate x (t - last_accepted_t); rule (a) only
+event1_v3b,last trusted heading before the event,253.21,deg,the anchor the gate was holding when the 67.5 deg step arrived
+event1_v3b,output withheld from,0.4,s,after the event frame; the 5 preceding frames are published with the held heading
+event1_v3b,heading trusted again after,0.6,s,time from the event frame to the first accepted frame
+event1_v3b,frames withheld,1,frame,
+event1_v3b,heading at re-anchor,187.82,deg,
+event1_v3b,true heading at re-anchor,253.21,deg,last trusted heading propagated with the integrated gyro
+event1_v3b,heading error at re-anchor,65.39,deg,
+event1_v3b,published position error at re-anchor,0.3949,m,2|L| sin(heading error / 2): what the vehicle reference point is off by once the gate trusts the heading again
+event1_v3b,gyro allowance at re-anchor,17.09,deg,g + gyro_drift_rate x (t - last_accepted_t); rule (a) only
+gated_residual,v1 g=10 deg: frames >=0.05 m,109,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v1 g=10 deg: episodes >=0.05 m,76,-,
+gated_residual,v1 g=10 deg: frames >=0.10 m,47,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v1 g=10 deg: episodes >=0.10 m,41,-,
+gated_residual,v1 g=10 deg: frames >=0.20 m,15,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v1 g=10 deg: episodes >=0.20 m,15,-,
+gated_residual,v1 g=10 deg: frames >=0.30 m,8,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v1 g=10 deg: episodes >=0.30 m,8,-,
+gated_residual,v1 g=10 deg: frames >=0.50 m,1,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v1 g=10 deg: episodes >=0.50 m,1,-,
+gated_residual,v1 g=17 deg: frames >=0.05 m,92,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v1 g=17 deg: episodes >=0.05 m,57,-,
+gated_residual,v1 g=17 deg: frames >=0.10 m,34,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v1 g=17 deg: episodes >=0.10 m,24,-,
+gated_residual,v1 g=17 deg: frames >=0.20 m,13,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v1 g=17 deg: episodes >=0.20 m,11,-,
+gated_residual,v1 g=17 deg: frames >=0.30 m,9,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v1 g=17 deg: episodes >=0.30 m,8,-,
+gated_residual,v1 g=17 deg: frames >=0.50 m,1,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v1 g=17 deg: episodes >=0.50 m,1,-,
+gated_residual,v2 g=10 deg: frames >=0.05 m,104,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v2 g=10 deg: episodes >=0.05 m,73,-,
+gated_residual,v2 g=10 deg: frames >=0.10 m,42,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v2 g=10 deg: episodes >=0.10 m,35,-,
+gated_residual,v2 g=10 deg: frames >=0.20 m,10,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v2 g=10 deg: episodes >=0.20 m,10,-,
+gated_residual,v2 g=10 deg: frames >=0.30 m,6,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v2 g=10 deg: episodes >=0.30 m,6,-,
+gated_residual,v2 g=10 deg: frames >=0.50 m,1,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v2 g=10 deg: episodes >=0.50 m,1,-,
+gated_residual,v2 g=17 deg: frames >=0.05 m,90,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v2 g=17 deg: episodes >=0.05 m,56,-,
+gated_residual,v2 g=17 deg: frames >=0.10 m,32,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v2 g=17 deg: episodes >=0.10 m,23,-,
+gated_residual,v2 g=17 deg: frames >=0.20 m,12,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v2 g=17 deg: episodes >=0.20 m,10,-,
+gated_residual,v2 g=17 deg: frames >=0.30 m,8,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v2 g=17 deg: episodes >=0.30 m,7,-,
+gated_residual,v2 g=17 deg: frames >=0.50 m,0,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v2 g=17 deg: episodes >=0.50 m,0,-,
+gated_residual,v3b g=10 deg: frames >=0.05 m,78,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3b g=10 deg: episodes >=0.05 m,55,-,
+gated_residual,v3b g=10 deg: frames >=0.10 m,31,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3b g=10 deg: episodes >=0.10 m,23,-,
+gated_residual,v3b g=10 deg: frames >=0.20 m,14,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3b g=10 deg: episodes >=0.20 m,10,-,
+gated_residual,v3b g=10 deg: frames >=0.30 m,9,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3b g=10 deg: episodes >=0.30 m,7,-,
+gated_residual,v3b g=10 deg: frames >=0.50 m,1,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3b g=10 deg: episodes >=0.50 m,1,-,
+gated_residual,v3b g=17 deg: frames >=0.05 m,86,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3b g=17 deg: episodes >=0.05 m,54,-,
+gated_residual,v3b g=17 deg: frames >=0.10 m,27,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3b g=17 deg: episodes >=0.10 m,20,-,
+gated_residual,v3b g=17 deg: frames >=0.20 m,13,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3b g=17 deg: episodes >=0.20 m,10,-,
+gated_residual,v3b g=17 deg: frames >=0.30 m,9,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3b g=17 deg: episodes >=0.30 m,7,-,
+gated_residual,v3b g=17 deg: frames >=0.50 m,2,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3b g=17 deg: episodes >=0.50 m,1,-,
+gated_residual,v3a g=10 deg: frames >=0.05 m,43,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3a g=10 deg: episodes >=0.05 m,39,-,
+gated_residual,v3a g=10 deg: frames >=0.10 m,13,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3a g=10 deg: episodes >=0.10 m,13,-,
+gated_residual,v3a g=10 deg: frames >=0.20 m,0,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3a g=10 deg: episodes >=0.20 m,0,-,
+gated_residual,v3a g=10 deg: frames >=0.30 m,0,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3a g=10 deg: episodes >=0.30 m,0,-,
+gated_residual,v3a g=10 deg: frames >=0.50 m,0,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3a g=10 deg: episodes >=0.50 m,0,-,
+gated_residual,v3a g=17 deg: frames >=0.05 m,47,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3a g=17 deg: episodes >=0.05 m,35,-,
+gated_residual,v3a g=17 deg: frames >=0.10 m,4,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3a g=17 deg: episodes >=0.10 m,4,-,
+gated_residual,v3a g=17 deg: frames >=0.20 m,0,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3a g=17 deg: episodes >=0.20 m,0,-,
+gated_residual,v3a g=17 deg: frames >=0.30 m,0,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3a g=17 deg: episodes >=0.30 m,0,-,
+gated_residual,v3a g=17 deg: frames >=0.50 m,0,frame,pseudo-steps surviving in the gated output stream
+gated_residual,v3a g=17 deg: episodes >=0.50 m,0,-,
+gated_residual,episode definition,consecutive or within 5 s,,residual frames are grouped into episodes; the episode size is its largest step
+gated_residual,re-anchor mark,accepted frame whose predecessor was not accepted,,"marks a step produced by the gate adopting a new heading, not by an accepted outlier"
+hold_cost,omega p99,0.6605,rad/s,measured gyro p99
+hold_cost,omega max,1.4537,rad/s,measured gyro max
+hold_cost,"bound at omega p99, h=1",0.0483,m,"2|L| sin(omega h tau / 2), tau = 0.2 s"
+hold_cost,"bound at omega max, h=1",0.1059,m,
+hold_cost,"bound at omega p99, h=2",0.0963,m,"2|L| sin(omega h tau / 2), tau = 0.2 s"
+hold_cost,"bound at omega max, h=2",0.2096,m,
+hold_cost,"bound at omega p99, h=3",0.1439,m,"2|L| sin(omega h tau / 2), tau = 0.2 s"
+hold_cost,"bound at omega max, h=3",0.3088,m,
+hold_cost,"bound at omega p99, h=4",0.1909,m,"2|L| sin(omega h tau / 2), tau = 0.2 s"
+hold_cost,"bound at omega max, h=4",0.4016,m,
+hold_cost,"bound at omega p99, h=5",0.2371,m,"2|L| sin(omega h tau / 2), tau = 0.2 s"
+hold_cost,"bound at omega max, h=5",0.4858,m,
+hold_cost,"measured max during genuine holds (v3a, g=17)",0.0235,m,2|L| sin(Delta_held/2) with Delta_held from the IMU-integrated yaw
+hold_cost,"measured RMS during genuine holds (v3a, g=17)",0.0062,m,
+hold_cost,fault step bound 2|L|,0.7311,m,what the gate buys against
+induced,recordings,1,bag,run_20260906_2026-09-06-15-26-15
+induced,session,"2026-09-06 15:26-16:24, greenhouse, vehicle parked",,"controlled multipath induction: a 0.50 x 0.70 m metal plate held beside the antennas, three attempts, two produced a false fix (field log of the 2026-09-06 induction session, not distributed); this is the session behind P1's E3b, not natural operation"
+induced,frames,17547,frame,usable increments in the induced session
+induced,fixed hours,0.7938,h,
+operational,recordings,46,bag,everything else
+operational,frames,347252,frame,
+operational,fixed hours,18.1753,h,
+operational,both showcase events are induced,1,-,the 15:57 (67.5 deg) and 15:51 (178.9 deg) events of section 6 are both inside the induction session; no operational recording carries a step of that size
+pseudo_step_induced,frames >=0.05 m,40,frame,
+pseudo_step_induced,episodes >=0.05 m,14,-,frames within 5 s are one episode
+pseudo_step_induced,rate >=0.05 m,50.3884,1/h,per hour of fixed solution in this subset (0.79 h)
+pseudo_step_induced,frames >=0.10 m,15,frame,
+pseudo_step_induced,episodes >=0.10 m,6,-,frames within 5 s are one episode
+pseudo_step_induced,rate >=0.10 m,18.8957,1/h,per hour of fixed solution in this subset (0.79 h)
+pseudo_step_induced,frames >=0.20 m,7,frame,
+pseudo_step_induced,episodes >=0.20 m,3,-,frames within 5 s are one episode
+pseudo_step_induced,rate >=0.20 m,8.818,1/h,per hour of fixed solution in this subset (0.79 h)
+pseudo_step_induced,frames >=0.30 m,6,frame,
+pseudo_step_induced,episodes >=0.30 m,2,-,frames within 5 s are one episode
+pseudo_step_induced,rate >=0.30 m,7.5583,1/h,per hour of fixed solution in this subset (0.79 h)
+pseudo_step_induced,frames >=0.50 m,1,frame,
+pseudo_step_induced,episodes >=0.50 m,1,-,frames within 5 s are one episode
+pseudo_step_induced,rate >=0.50 m,1.2597,1/h,per hour of fixed solution in this subset (0.79 h)
+pseudo_step_induced,residual RMS >=0.10 m,0.007,m,dp_pub - 2|L| sin(|dpsi|/2)
+pseudo_step_induced,residual max |.| >=0.10 m,0.0168,m,
+pseudo_step_induced,|dpsi| range >=0.10 m,16.6 - 167.5,deg,
+pseudo_step_induced,residual RMS >=0.05 m,0.0071,m,
+pseudo_step_induced,residual max |.| >=0.05 m,0.0168,m,
+pseudo_step_induced,fraction within 0.02 m >=0.05 m,100.0,%,
+pseudo_step_operational,frames >=0.05 m,58,frame,
+pseudo_step_operational,episodes >=0.05 m,39,-,frames within 5 s are one episode
+pseudo_step_operational,rate >=0.05 m,3.1911,1/h,per hour of fixed solution in this subset (18.18 h)
+pseudo_step_operational,frames >=0.10 m,21,frame,
+pseudo_step_operational,episodes >=0.10 m,15,-,frames within 5 s are one episode
+pseudo_step_operational,rate >=0.10 m,1.1554,1/h,per hour of fixed solution in this subset (18.18 h)
+pseudo_step_operational,frames >=0.20 m,10,frame,
+pseudo_step_operational,episodes >=0.20 m,9,-,frames within 5 s are one episode
+pseudo_step_operational,rate >=0.20 m,0.5502,1/h,per hour of fixed solution in this subset (18.18 h)
+pseudo_step_operational,frames >=0.30 m,7,frame,
+pseudo_step_operational,episodes >=0.30 m,6,-,frames within 5 s are one episode
+pseudo_step_operational,rate >=0.30 m,0.3851,1/h,per hour of fixed solution in this subset (18.18 h)
+pseudo_step_operational,frames >=0.50 m,1,frame,
+pseudo_step_operational,episodes >=0.50 m,1,-,frames within 5 s are one episode
+pseudo_step_operational,rate >=0.50 m,0.055,1/h,per hour of fixed solution in this subset (18.18 h)
+pseudo_step_operational,residual RMS >=0.10 m,0.0073,m,dp_pub - 2|L| sin(|dpsi|/2)
+pseudo_step_operational,residual max |.| >=0.10 m,0.0176,m,
+pseudo_step_operational,|dpsi| range >=0.10 m,16.7 - 117.2,deg,
+pseudo_step_operational,residual RMS >=0.05 m,0.0079,m,
+pseudo_step_operational,residual max |.| >=0.05 m,0.0186,m,
+pseudo_step_operational,fraction within 0.02 m >=0.05 m,100.0,%,
+operational_by_site,concrete yard frames >=0.10 m,6,frame,
+operational_by_site,concrete yard fixed hours,11.6768,h,
+operational_by_site,concrete yard rate,0.5138,1/h,
+operational_by_site,greenhouse (natural) frames >=0.10 m,14,frame,
+operational_by_site,greenhouse (natural) fixed hours,2.3744,h,
+operational_by_site,greenhouse (natural) rate,5.8961,1/h,the greenhouse recordings left here are 2026-08-28/29 (natural operation) plus the 0.01 h tail of 2026-08-30
+operational_by_site,orchard frames >=0.10 m,1,frame,
+operational_by_site,orchard fixed hours,4.1241,h,
+operational_by_site,orchard rate,0.2425,1/h,
+operational_by_site,overall frames >=0.10 m,21,frame,
+operational_by_site,overall rate,1.1554,1/h,21 frames in 18.18 fixed hours
+increments_operational,all n,347252,frame,
+increments_operational,all RMS,2.1168,deg,root mean square of |dpsi|
+increments_operational,all P(>5 deg),3.294149,%,exceedance probability
+increments_operational,all count >5 deg,11439,frame,
+increments_operational,all P(>10 deg),0.34989,%,exceedance probability
+increments_operational,all count >10 deg,1215,frame,
+increments_operational,all P(>20 deg),0.038877,%,exceedance probability
+increments_operational,all count >20 deg,135,frame,
+increments_operational,all P(>45 deg),0.012671,%,exceedance probability
+increments_operational,all count >45 deg,44,frame,
+increments_operational,all P(>90 deg),0.004608,%,exceedance probability
+increments_operational,all count >90 deg,16,frame,
+increments_operational,all P(> max bound 16.66 deg),0.054139,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments_operational,all count > max bound 16.66 deg,188,frame,increments that cannot be a turn of this vehicle
+increments_operational,"all P(> Delta_min 48.5 deg, T=0.30 m)",0.011519,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments_operational,"all count > Delta_min 48.5 deg, T=0.30 m",40,frame,
+increments_operational,"all P(> Delta_min 86.3 deg, T=0.50 m)",0.004896,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments_operational,"all count > Delta_min 86.3 deg, T=0.50 m",17,frame,
+increments_operational,all median,0.2844,deg,secondary
+increments_operational,all p90,2.4988,deg,secondary
+increments_operational,all p99,7.2307,deg,secondary
+increments_operational,all p99.9,13.1954,deg,secondary
+increments_operational,all max,175.7729,deg,secondary
+increments_operational,straight n,140041,frame,
+increments_operational,straight RMS,1.8027,deg,root mean square of |dpsi|
+increments_operational,straight P(>5 deg),0.766204,%,exceedance probability
+increments_operational,straight count >5 deg,1073,frame,
+increments_operational,straight P(>10 deg),0.179233,%,exceedance probability
+increments_operational,straight count >10 deg,251,frame,
+increments_operational,straight P(>20 deg),0.055698,%,exceedance probability
+increments_operational,straight count >20 deg,78,frame,
+increments_operational,straight P(>45 deg),0.019994,%,exceedance probability
+increments_operational,straight count >45 deg,28,frame,
+increments_operational,straight P(>90 deg),0.007141,%,exceedance probability
+increments_operational,straight count >90 deg,10,frame,
+increments_operational,straight P(> max bound 16.66 deg),0.075692,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments_operational,straight count > max bound 16.66 deg,106,frame,increments that cannot be a turn of this vehicle
+increments_operational,"straight P(> Delta_min 48.5 deg, T=0.30 m)",0.017138,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments_operational,"straight count > Delta_min 48.5 deg, T=0.30 m",24,frame,
+increments_operational,"straight P(> Delta_min 86.3 deg, T=0.50 m)",0.007141,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments_operational,"straight count > Delta_min 86.3 deg, T=0.50 m",10,frame,
+increments_operational,straight median,0.2821,deg,secondary
+increments_operational,straight p90,0.9822,deg,secondary
+increments_operational,straight p99,4.6728,deg,secondary
+increments_operational,straight p99.9,13.6226,deg,secondary
+increments_operational,straight max,175.7729,deg,secondary
+increments_operational,turn n,29808,frame,
+increments_operational,turn RMS,4.5982,deg,root mean square of |dpsi|
+increments_operational,turn P(>5 deg),19.0989,%,exceedance probability
+increments_operational,turn count >5 deg,5693,frame,
+increments_operational,turn P(>10 deg),2.331589,%,exceedance probability
+increments_operational,turn count >10 deg,695,frame,
+increments_operational,turn P(>20 deg),0.134192,%,exceedance probability
+increments_operational,turn count >20 deg,40,frame,
+increments_operational,turn P(>45 deg),0.036903,%,exceedance probability
+increments_operational,turn count >45 deg,11,frame,
+increments_operational,turn P(>90 deg),0.020129,%,exceedance probability
+increments_operational,turn count >90 deg,6,frame,
+increments_operational,turn P(> max bound 16.66 deg),0.187869,%,exceedance of the measured physical bound |omega_z|max x 0.2 s
+increments_operational,turn count > max bound 16.66 deg,56,frame,increments that cannot be a turn of this vehicle
+increments_operational,"turn P(> Delta_min 48.5 deg, T=0.30 m)",0.036903,%,exceedance of the eq. (4) floor of the deployed 0.30 m position test
+increments_operational,"turn count > Delta_min 48.5 deg, T=0.30 m",11,frame,
+increments_operational,"turn P(> Delta_min 86.3 deg, T=0.50 m)",0.023484,%,exceedance of the eq. (4) floor of the deployed 0.50 m position test
+increments_operational,"turn count > Delta_min 86.3 deg, T=0.50 m",7,frame,
+increments_operational,turn median,2.113,deg,secondary
+increments_operational,turn p90,6.3719,deg,secondary
+increments_operational,turn p99,12.1352,deg,secondary
+increments_operational,turn p99.9,24.6771,deg,secondary
+increments_operational,turn max,168.2874,deg,secondary
+increments_operational,frames above the max bound,172,frame,|dpsi| > 16.658 deg/frame
+increments_operational,P(|dpsi| > max bound),0.055583,%,of the 309448 operational increments with a usable gyro envelope
+gate_split,induced: pseudo-step onsets >=0.10 m,6,-,first frame of each ungated pseudo-step episode
+gate_split,operational: pseudo-step onsets >=0.10 m,15,-,first frame of each ungated pseudo-step episode
+gate_split,"v3b, operational: false-gate rate",0.0407,%,"g = 17 deg; 14/15 onsets held, 117 frames withheld, 15 residual episodes >= 0.10 m"
+gate_split,"v3b, induced: false-gate rate",0.101,%,"g = 17 deg; 4/6 onsets held, 22 frames withheld, 5 residual episodes >= 0.10 m"
+gate_split,"v3a 5 s, operational: false-gate rate",0.2004,%,"g = 17 deg; 14/15 onsets held, 866 frames withheld, 7 residual episodes >= 0.10 m"
+gate_split,"v3a 5 s, induced: false-gate rate",0.6775,%,"g = 17 deg; 4/6 onsets held, 154 frames withheld, 5 residual episodes >= 0.10 m"
+gate_split,"v3a 10 s, operational: false-gate rate",0.3216,%,"g = 17 deg; 13/15 onsets held, 1381 frames withheld, 5 residual episodes >= 0.10 m"
+gate_split,"v3a 10 s, induced: false-gate rate",1.2184,%,"g = 17 deg; 3/6 onsets held, 261 frames withheld, 4 residual episodes >= 0.10 m"
+gate_split,"v3a 20 s, operational: false-gate rate",0.4264,%,"g = 17 deg; 11/15 onsets held, 1839 frames withheld, 5 residual episodes >= 0.10 m"
+gate_split,"v3a 20 s, induced: false-gate rate",2.4843,%,"g = 17 deg; 3/6 onsets held, 496 frames withheld, 3 residual episodes >= 0.10 m"
+gate_split,"v3a 60 s, operational: false-gate rate",0.8443,%,"g = 17 deg; 11/15 onsets held, 3717 frames withheld, 4 residual episodes >= 0.10 m"
+gate_split,"v3a 60 s, induced: false-gate rate",6.0561,%,"g = 17 deg; 4/6 onsets held, 1151 frames withheld, 3 residual episodes >= 0.10 m"
+gate_split,"v3a unbounded, operational: false-gate rate",3.7548,%,"g = 17 deg; 11/15 onsets held, 13555 frames withheld, 2 residual episodes >= 0.10 m"
+gate_split,"v3a unbounded, induced: false-gate rate",33.7989,%,"g = 17 deg; 4/6 onsets held, 5911 frames withheld, 2 residual episodes >= 0.10 m"
+reviewer_classes,all: genuine (tol 1 deg),302455,frame,|dpsi - dpsi_imu| <= 1 deg; denominator of the false-gate rate
+reviewer_classes,all: outlier (tol 1 deg),29224,frame,
+reviewer_classes,all: genuine (tol 2 deg),321238,frame,|dpsi - dpsi_imu| <= 2 deg; denominator of the false-gate rate
+reviewer_classes,all: outlier (tol 2 deg),10441,frame,
+reviewer_classes,all: genuine (tol 5 deg),329680,frame,|dpsi - dpsi_imu| <= 5 deg; denominator of the false-gate rate
+reviewer_classes,all: outlier (tol 5 deg),1999,frame,
+reviewer_classes,all: unclassified (no IMU),33120,frame,frames in the 7 recordings without an IMU; excluded from both rates
+reviewer_classes,all: total increments,364799,frame,
+reviewer_classes,operational: genuine (tol 1 deg),286654,frame,|dpsi - dpsi_imu| <= 1 deg; denominator of the false-gate rate
+reviewer_classes,operational: outlier (tol 1 deg),27517,frame,
+reviewer_classes,operational: genuine (tol 2 deg),304412,frame,|dpsi - dpsi_imu| <= 2 deg; denominator of the false-gate rate
+reviewer_classes,operational: outlier (tol 2 deg),9759,frame,
+reviewer_classes,operational: genuine (tol 5 deg),312343,frame,|dpsi - dpsi_imu| <= 5 deg; denominator of the false-gate rate
+reviewer_classes,operational: outlier (tol 5 deg),1828,frame,
+reviewer_classes,operational: unclassified (no IMU),33081,frame,frames in the 7 recordings without an IMU; excluded from both rates
+reviewer_classes,operational: total increments,347252,frame,
+reviewer_tolerance,"v1, all, tol 1 deg",0.0248,%,false-gate rate at g = 17 deg over 302455 genuine frames
+reviewer_tolerance,"v1, operational, tol 1 deg",0.023,%,false-gate rate at g = 17 deg over 286654 genuine frames
+reviewer_tolerance,"v1, all, tol 2 deg",0.0305,%,false-gate rate at g = 17 deg over 321238 genuine frames
+reviewer_tolerance,"v1, operational, tol 2 deg",0.0283,%,false-gate rate at g = 17 deg over 304412 genuine frames
+reviewer_tolerance,"v1, all, tol 5 deg",0.1147,%,false-gate rate at g = 17 deg over 329680 genuine frames
+reviewer_tolerance,"v1, operational, tol 5 deg",0.1156,%,false-gate rate at g = 17 deg over 312343 genuine frames
+reviewer_tolerance,"v2, all, tol 1 deg",0.0231,%,false-gate rate at g = 17 deg over 302455 genuine frames
+reviewer_tolerance,"v2, operational, tol 1 deg",0.0216,%,false-gate rate at g = 17 deg over 286654 genuine frames
+reviewer_tolerance,"v2, all, tol 2 deg",0.028,%,false-gate rate at g = 17 deg over 321238 genuine frames
+reviewer_tolerance,"v2, operational, tol 2 deg",0.026,%,false-gate rate at g = 17 deg over 304412 genuine frames
+reviewer_tolerance,"v2, all, tol 5 deg",0.1101,%,false-gate rate at g = 17 deg over 329680 genuine frames
+reviewer_tolerance,"v2, operational, tol 5 deg",0.1111,%,false-gate rate at g = 17 deg over 312343 genuine frames
+reviewer_tolerance,"v3b, all, tol 1 deg",0.0344,%,false-gate rate at g = 17 deg over 302455 genuine frames
+reviewer_tolerance,"v3b, operational, tol 1 deg",0.0314,%,false-gate rate at g = 17 deg over 286654 genuine frames
+reviewer_tolerance,"v3b, all, tol 2 deg",0.0439,%,false-gate rate at g = 17 deg over 321238 genuine frames
+reviewer_tolerance,"v3b, operational, tol 2 deg",0.0407,%,false-gate rate at g = 17 deg over 304412 genuine frames
+reviewer_tolerance,"v3b, all, tol 5 deg",0.0525,%,false-gate rate at g = 17 deg over 329680 genuine frames
+reviewer_tolerance,"v3b, operational, tol 5 deg",0.0493,%,false-gate rate at g = 17 deg over 312343 genuine frames
+reviewer_tolerance,"v3a, all, tol 1 deg",5.1171,%,false-gate rate at g = 17 deg over 302455 genuine frames
+reviewer_tolerance,"v3a, operational, tol 1 deg",3.5116,%,false-gate rate at g = 17 deg over 286654 genuine frames
+reviewer_tolerance,"v3a, all, tol 2 deg",5.3284,%,false-gate rate at g = 17 deg over 321238 genuine frames
+reviewer_tolerance,"v3a, operational, tol 2 deg",3.7548,%,false-gate rate at g = 17 deg over 304412 genuine frames
+reviewer_tolerance,"v3a, all, tol 5 deg",5.5169,%,false-gate rate at g = 17 deg over 329680 genuine frames
+reviewer_tolerance,"v3a, operational, tol 5 deg",3.9514,%,false-gate rate at g = 17 deg over 312343 genuine frames
+reviewer_sigma,stationary frames,103057,frame,"v2 slow class (reconstructed antenna path <= 0.50 m over 3 s), fixed solution, |omega_z| < 0.02 rad/s"
+reviewer_sigma,sigma_psi overall,0.7356,deg,"std of the per-frame heading increment / sqrt(2), over 103057 frames (increment std 1.0403 deg)"
+reviewer_sigma,sigma_psi concrete yard,0.4624,deg,"std of the per-frame heading increment / sqrt(2), over 40377 frames (increment std 0.6539 deg)"
+reviewer_sigma,sigma_psi greenhouse,1.0923,deg,"std of the per-frame heading increment / sqrt(2), over 37727 frames (increment std 1.5448 deg)"
+reviewer_sigma,sigma_psi orchard,0.2917,deg,"std of the per-frame heading increment / sqrt(2), over 24953 frames (increment std 0.4125 deg)"
+reviewer_sigma,driver cov[35],7.61544e-05,rad^2,what the driver publishes when the heading is valid = 0.500 deg 1-sigma
+reviewer_stale,induced: pseudo-steps >=0.05 m,40,frame,
+reviewer_stale,induced: stale-heading candidates >=0.05 m,0,frame,"the IMU turn over the preceding 2.0 s is within 5 deg of the observed increment, so the jump could be a late update of a real turn"
+reviewer_stale,operational: pseudo-steps >=0.05 m,58,frame,
+reviewer_stale,operational: stale-heading candidates >=0.05 m,5,frame,"the IMU turn over the preceding 2.0 s is within 5 deg of the observed increment, so the jump could be a late update of a real turn"
+reviewer_stale,induced: pseudo-steps >=0.10 m,15,frame,
+reviewer_stale,induced: stale-heading candidates >=0.10 m,0,frame,"the IMU turn over the preceding 2.0 s is within 5 deg of the observed increment, so the jump could be a late update of a real turn"
+reviewer_stale,operational: pseudo-steps >=0.10 m,21,frame,
+reviewer_stale,operational: stale-heading candidates >=0.10 m,0,frame,"the IMU turn over the preceding 2.0 s is within 5 deg of the observed increment, so the jump could be a late update of a real turn"
+reviewer_stale,event1: IMU turn over the preceding 2.0 s,-0.006,deg,vehicle parked; the reported increment is -67.54 deg
+reviewer_stale,event1: IMU turn over the frame itself,0.0,deg,
+reviewer_stale,event1: stale-heading candidate,0,-,"0 = no, the IMU saw no turn"
+reviewer_stale,event2: IMU turn over the preceding 2.0 s,2.99,deg,vehicle parked; the reported increment is -178.87 deg
+reviewer_stale,event2: IMU turn over the frame itself,-0.302,deg,
+reviewer_stale,event2: stale-heading candidate,0,-,"0 = no, the IMU saw no turn"
+reviewer_mahal,"k = 3, all: false-gate rate",19.31,%,"84159 frames rejected, 0 withheld (the filter always publishes an estimate), 14/21 pseudo-step onsets rejected, 0 residual episodes >= 0.10 m"
+reviewer_mahal,"k = 3, operational: false-gate rate",17.5634,%,"74995 frames rejected, 0 withheld (the filter always publishes an estimate), 10/15 pseudo-step onsets rejected, 0 residual episodes >= 0.10 m"
+reviewer_mahal,k = 3: event 1 rejected for,209.74,s,1048 frames; the filter keeps publishing its own estimate throughout
+reviewer_mahal,k = 3: event 1 heading error when accepted again,14.05,deg,
+reviewer_mahal,k = 3: event 1 position error when accepted again,0.0894,m,
+reviewer_mahal,"k = 5, all: false-gate rate",14.5618,%,"66182 frames rejected, 0 withheld (the filter always publishes an estimate), 13/21 pseudo-step onsets rejected, 0 residual episodes >= 0.10 m"
+reviewer_mahal,"k = 5, operational: false-gate rate",13.5504,%,"60088 frames rejected, 0 withheld (the filter always publishes an estimate), 9/15 pseudo-step onsets rejected, 0 residual episodes >= 0.10 m"
+reviewer_mahal,k = 5: event 1 rejected for,206.73,s,1033 frames; the filter keeps publishing its own estimate throughout
+reviewer_mahal,k = 5: event 1 heading error when accepted again,17.32,deg,
+reviewer_mahal,k = 5: event 1 position error when accepted again,0.1101,m,
+reviewer_mahal,q_yaw,4e-06,rad^2/s,process noise = (measured gyro drift 0.002 rad/s)^2 per second
+reviewer_mahal,R_yaw,7.61544e-05,rad^2,measurement noise = the cov[35] the driver publishes (0.50 deg)
+reviewer_mahal,caveat,"1-D emulation, not the full robot_localization filter",,"one scalar yaw state, no cross-covariance with position or velocity, no differential-drive process model"
+reviewer_class_rule,rule,"slow: sum|dp_ant| over the trailing 3.0 s <= 0.50 m; else straight if |integral omega_z| < 5 deg, else turn; na without 3 s of history or without an IMU",,"v1 used the published displacement over the same window, which is the quantity a lever-arm pseudo-step corrupts"
+reviewer_class_rule,frames that changed class,172769,frame,47.36 % of the 364799 increments
+reviewer_class_xtab,v1 straight -> v2 straight,139783,frame,
+reviewer_class_xtab,v1 straight -> v2 turn,119,frame,
+reviewer_class_xtab,v1 straight -> v2 slow,129158,frame,
+reviewer_class_xtab,v1 straight -> v2 na,3,frame,
+reviewer_class_xtab,v1 turn -> v2 straight,69,frame,
+reviewer_class_xtab,v1 turn -> v2 turn,29731,frame,
+reviewer_class_xtab,v1 turn -> v2 slow,32256,frame,
+reviewer_class_xtab,v1 na -> v2 straight,311,frame,
+reviewer_class_xtab,v1 na -> v2 turn,31,frame,
+reviewer_class_xtab,v1 na -> v2 slow,10822,frame,
+reviewer_class_xtab,v1 na -> v2 na,22516,frame,
+reviewer_class_effect,straight v1: n,269063,frame,
+reviewer_class_effect,straight v1: RMS,1.584,deg,
+reviewer_class_effect,straight v1: P(>5 deg),0.5147,%,
+reviewer_class_effect,straight v2: n,140163,frame,
+reviewer_class_effect,straight v2: RMS,2.0158,deg,
+reviewer_class_effect,straight v2: P(>5 deg),0.7898,%,
+reviewer_class_effect,straight v1: false-gate at g=17 (v3b),0.0392,%,over 262901 genuine frames
+reviewer_class_effect,straight v2: false-gate at g=17 (v3b),0.0487,%,over 135645 genuine frames
+reviewer_class_effect,turn v1: n,62056,frame,
+reviewer_class_effect,turn v1: RMS,4.0312,deg,
+reviewer_class_effect,turn v1: P(>5 deg),15.9501,%,
+reviewer_class_effect,turn v2: n,29881,frame,
+reviewer_class_effect,turn v2: RMS,4.629,deg,
+reviewer_class_effect,turn v2: P(>5 deg),19.1326,%,
+reviewer_class_effect,turn v1: false-gate at g=17 (v3b),0.0658,%,over 57779 genuine frames
+reviewer_class_effect,turn v2: false-gate at g=17 (v3b),0.109,%,over 26594 genuine frames
+reviewer_class_effect,slow v2: n,172236,frame,
+reviewer_class_effect,slow v2: RMS,1.7406,deg,
+reviewer_class_effect,slow v2: P(>5 deg),2.633,%,
+reviewer_class_effect,slow v2: false-gate at g=17 (v3b),0.0289,%,over 158953 genuine frames
+anomaly,frames with dp_pub > 1 m,887,frame,"position jumps far beyond 2|L| = 0.731 m; the reconstructed antenna point jumps with them (median |dp_ant| 1.705 m), so these are position-domain events (solution resets / injected faults), NOT lever-arm pseudo-steps, and the dp_ant criterion excludes them"
+anomaly,dp_pub > 1 m in run_20260909_2026-09-09-07-56-42,865,frame,largest 30.40 m
+anomaly,dp_pub > 1 m in run_20260907_2026-09-07-13-15-11,10,frame,largest 5.54 m
+anomaly,dp_pub > 1 m in run_20260907_2026-09-07-14-19-47,4,frame,largest 2.45 m
+anomaly,dp_pub > 1 m in run_20260829_2026-08-29-09-12-05,3,frame,largest 2.50 m
+anomaly,dp_pub > 1 m in run_20260828_2026-08-28-10-16-47,2,frame,largest 2.18 m
+anomaly,dp_pub > 1 m in run_20260826_2026-08-26-19-52-27,1,frame,largest 1.04 m
+anomaly,dp_pub > 1 m in run_20260828_2026-08-28-16-38-15,1,frame,largest 1.79 m
+anomaly,dp_pub > 1 m in run_20260830_2026-08-30-18-16-30,1,frame,largest 1.81 m
+anomaly,bags with no fixed solution,3,bag,"run_20260826_2026-08-26-19-52-27, run_20260826_2026-08-26-19-56-35, run_20260826_2026-08-26-20-01-01"
+anomaly,duplicate time stamps,2760,frame,"consecutive /rtk_odom frames with identical stamps (dt = 0); 0.76 % of the increments. Their |dpsi| is ordinary (median 0.282 deg, p99 7.136 deg, max 91.495 deg), but the gate gives them a budget of yaw_gate_margin alone, so they are the tightest frames in the replay"
+anomaly,frames with cov[35] >= 1e5,54,frame,"driver had no heading and published the raw ANT1 point with yaw = 0; bags affected: run_20260906_2026-09-06-15-26-15, run_20260907_2026-09-07-13-15-11, run_20260909_2026-09-09-07-56-42"

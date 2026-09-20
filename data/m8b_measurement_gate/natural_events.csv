@@ -1,0 +1,6 @@
+event,arm,rec_step_m,rec_dpsi_deg,step_gps_m,pub_gap_s,diff_rtk_peak_m,diff_rtk_med_m,node_gate_actions,meas_gate_actions
+E_-67.5deg,meas_q060,0.4014,-67.54,0.0136,0.201,0.4065,0.0012,-,hold;nopub
+E_-67.5deg,meas_q1e4,0.4014,-67.54,0.0137,0.201,0.4054,0.0028,-,hold;nopub
+E_-67.5deg,both_q060,0.4014,-67.54,0.0136,0.201,0.4064,0.0014,-,hold;nopub
+E_-167.5deg,meas_q060,0.7264,-167.51,0.0027,0.201,0.731,0.0028,-,hold;nopub
+E_-167.5deg,both_q060,0.7264,-167.51,0.0027,0.201,0.7306,0.0032,-,hold;nopub

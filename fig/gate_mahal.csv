@@ -1,0 +1,5 @@
+k_sigma,subset,false_gate_pct,rejected,withheld,onsets_rejected,onsets,residual_episodes_010,residual_frames_010,residual_episodes_005
+3.0,all,19.31,84159,0,14,21,0,0,10
+3.0,operational,17.5634,74995,0,10,15,0,0,10
+5.0,all,14.5618,66182,0,13,21,0,0,12
+5.0,operational,13.5504,60088,0,9,15,0,0,11

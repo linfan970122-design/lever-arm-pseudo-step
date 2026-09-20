@@ -1,0 +1,397 @@
+diff -u -r a/include/robot_localization/navsat_transform.h b/include/robot_localization/navsat_transform.h
+--- a/include/robot_localization/navsat_transform.h	2026-09-19 21:10:38.351939837 +0800
++++ b/include/robot_localization/navsat_transform.h	2026-09-19 21:10:38.353739138 +0800
+@@ -112,6 +112,40 @@
+                                  tf2::Transform &robot_odom_pose,
+                                  const ros::Time &transform_time);
+ 
++    //! @brief Heading-continuity gate applied to the orientation that rotates the navsat lever arm.
++    //!
++    //! A yaw increment larger than what the platform can turn in one nominal interval is rejected and the last
++    //! accepted yaw is substituted. Without this, a heading outlier is rotated into the base_link->gps offset and
++    //! leaves the published position with a step of 2*|offset|*sin(dyaw/2) while every position quality field
++    //! (fix status, covariance) stays nominal.
++    //!
++    //! The budget is a fixed per-frame quantity: it is deliberately NOT scaled by the time since the last
++    //! accepted heading, because that makes the gate widen exactly while a fault persists. A reference older
++    //! than max_gap_frames_ nominal intervals is declared stale instead. Once the heading is invalid the gate
++    //! re-anchors either on a gyro-propagated reference (bounded by max_gyro_ref_time_) or, failing that, on two
++    //! consecutive headings that agree with each other.
++    //!
++    //! @param[in,out] orientation The world->base_link rotation; its yaw is replaced by the held yaw if rejected
++    //! @param[in] stamp The time of the orientation sample
++    //! @return true if this cycle's gps odometry may be published, false if it must be withheld
++    //!
++    bool gateHeading(tf2::Quaternion &orientation, const ros::Time &stamp);
++
++    //! @brief Latches a heading as the gate's new reference and reseeds the gyro propagation from it
++    //! @param[in] yaw The heading to accept (rad)
++    //! @param[in] stamp The time of that heading
++    //!
++    void acceptHeading(const double yaw, const ros::Time &stamp);
++
++    //! @brief Callback that dead-reckons the accepted heading with the IMU's yaw rate
++    //!
++    //! Only subscribed when use_gyro_ is set. This is separate from imu_sub_, which is shut down once the datum
++    //! has been computed, whereas the gate needs the gyro for the lifetime of the node.
++    //!
++    //! @param[in] msg The IMU message to process
++    //!
++    void gyroCallback(const sensor_msgs::ImuConstPtr& msg);
++
+     //! @brief Callback for the GPS fix data
+     //! @param[in] msg The NavSatFix message to process
+     //!
+@@ -247,6 +281,90 @@
+     //!
+     double yaw_offset_;
+ 
++    //! @brief Largest yaw rate the platform can physically achieve (rad/s), used by the heading-continuity gate
++    //!
++    double max_yaw_rate_;
++
++    //! @brief Constant tolerance added to the yaw increment budget (rad), covers heading noise and time jitter
++    //!
++    double yaw_gate_margin_;
++
++    //! @brief Nominal interval between heading samples (s); the increment budget is one interval's worth
++    //!
++    double nominal_dt_;
++
++    //! @brief Number of consecutive rejected yaw updates after which the heading is declared unusable
++    //!
++    int max_hold_frames_;
++
++    //! @brief Number of nominal intervals after which an unrefreshed reference heading is declared stale
++    //!
++    int max_gap_frames_;
++
++    //! @brief Whether to dead-reckon the reference heading with the IMU yaw rate while the heading is invalid
++    //!
++    bool use_gyro_;
++
++    //! @brief Yaw-rate bias growth allowed for the gyro reference (rad per second of propagation)
++    //!
++    double gyro_drift_rate_;
++
++    //! @brief Longest propagation (s) for which the gyro reference is still trusted for re-anchoring
++    //!
++    double max_gyro_ref_time_;
++
++    //! @brief Last yaw accepted by the heading-continuity gate (rad)
++    //!
++    double last_accepted_yaw_;
++
++    //! @brief Time stamp of last_accepted_yaw_; zero until the first yaw is accepted
++    //!
++    ros::Time last_accepted_yaw_time_;
++
++    //! @brief Number of consecutive yaw updates rejected by the heading-continuity gate
++    //!
++    int yaw_hold_count_;
++
++    //! @brief False once the reference heading is unusable; cleared by a re-anchor
++    //!
++    bool heading_valid_;
++
++    //! @brief Candidate heading awaiting confirmation by the next sample while the heading is invalid (rad)
++    //!
++    double pending_yaw_;
++
++    //! @brief Time stamp of pending_yaw_
++    //!
++    ros::Time pending_yaw_time_;
++
++    //! @brief Whether pending_yaw_ holds a candidate
++    //!
++    bool has_pending_yaw_;
++
++    //! @brief Stamp of the last heading sample the gate ran on, so each sample is gated exactly once
++    //!
++    ros::Time last_gated_time_;
++
++    //! @brief Yaw of that sample; a repeat is the same stamp AND the same yaw, not the stamp alone
++    //!
++    double last_gated_yaw_;
++
++    //! @brief The gate's latest publish decision, consumed by prepareGpsOdometry()
++    //!
++    bool heading_gate_publish_;
++
++    //! @brief last_accepted_yaw_ propagated forward with the IMU yaw rate (rad)
++    //!
++    double gyro_yaw_;
++
++    //! @brief Time up to which gyro_yaw_ has been propagated
++    //!
++    ros::Time gyro_yaw_time_;
++
++    //! @brief Whether any IMU message has been received on the gate's gyro subscription
++    //!
++    bool has_gyro_;
++
+     //! @brief Frame ID of the robot's body frame
+     //!
+     //! This is needed for obtaining transforms from the robot's body frame to the frames of sensors (IMU and GPS)
+@@ -344,6 +462,10 @@
+     //!
+     ros::Subscriber imu_sub_;
+ 
++    //! @brief Subscribes to imu topic for the heading gate's gyro reference; only when use_gyro_ is set
++    //!
++    ros::Subscriber gyro_sub_;
++
+     //! @brief Odometry subscriber
+     //!
+     ros::Subscriber odom_sub_;
+diff -u -r a/src/navsat_transform.cpp b/src/navsat_transform.cpp
+--- a/src/navsat_transform.cpp	2026-09-19 21:10:38.351852238 +0800
++++ b/src/navsat_transform.cpp	2026-09-19 21:10:38.354546931 +0800
+@@ -39,6 +39,8 @@
+ #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+ #include <XmlRpcException.h>
+ 
++#include <algorithm>
++#include <cmath>
+ #include <string>
+ 
+ namespace RobotLocalization
+@@ -60,6 +62,23 @@
+     zero_altitude_(false),
+     magnetic_declination_(0.0),
+     yaw_offset_(0.0),
++    max_yaw_rate_(0.5),
++    yaw_gate_margin_(0.05),
++    nominal_dt_(0.2),
++    max_hold_frames_(5),
++    max_gap_frames_(3),
++    use_gyro_(false),
++    gyro_drift_rate_(0.002),
++    max_gyro_ref_time_(10.0),
++    last_accepted_yaw_(0.0),
++    yaw_hold_count_(0),
++    heading_valid_(true),
++    pending_yaw_(0.0),
++    has_pending_yaw_(false),
++    last_gated_yaw_(0.0),
++    heading_gate_publish_(true),
++    gyro_yaw_(0.0),
++    has_gyro_(false),
+     base_link_frame_id_("base_link"),
+     gps_frame_id_(""),
+     utm_zone_(0),
+@@ -81,6 +100,14 @@
+     // Load the parameters we need
+     nh_priv.getParam("magnetic_declination_radians", magnetic_declination_);
+     nh_priv.param("yaw_offset", yaw_offset_, 0.0);
++    nh_priv.param("max_yaw_rate", max_yaw_rate_, 0.5);
++    nh_priv.param("yaw_gate_margin", yaw_gate_margin_, 0.05);
++    nh_priv.param("nominal_dt", nominal_dt_, 0.2);
++    nh_priv.param("max_hold_frames", max_hold_frames_, 5);
++    nh_priv.param("max_gap_frames", max_gap_frames_, 3);
++    nh_priv.param("use_gyro", use_gyro_, false);
++    nh_priv.param("gyro_drift_rate", gyro_drift_rate_, 0.002);
++    nh_priv.param("max_gyro_ref_time", max_gyro_ref_time_, 10.0);
+     nh_priv.param("broadcast_cartesian_transform", broadcast_cartesian_transform_, false);
+     nh_priv.param("broadcast_cartesian_transform_as_parent_frame",
+                   broadcast_cartesian_transform_as_parent_frame_, false);
+@@ -182,6 +209,13 @@
+       imu_sub_ = nh.subscribe("imu/data", 1, &NavSatTransform::imuCallback, this);
+     }
+ 
++    if (use_gyro_)
++    {
++      // imu_sub_ above is shut down once the datum has been computed, but the heading gate needs the yaw rate
++      // for the lifetime of the node, so take a separate lightweight subscription.
++      gyro_sub_ = nh.subscribe("imu/data", 1, &NavSatTransform::gyroCallback, this);
++    }
++
+     gps_odom_pub_ = nh.advertise<nav_msgs::Odometry>("odometry/gps", 10);
+ 
+     if (publish_gps_)
+@@ -567,12 +601,156 @@
+     }
+   }
+ 
++  void NavSatTransform::acceptHeading(const double yaw, const ros::Time &stamp)
++  {
++    last_accepted_yaw_ = yaw;
++    last_accepted_yaw_time_ = stamp;
++    yaw_hold_count_ = 0;
++    heading_valid_ = true;
++    has_pending_yaw_ = false;
++
++    // Restart the gyro propagation from the heading we just trusted
++    gyro_yaw_ = yaw;
++    gyro_yaw_time_ = stamp;
++  }
++
++  void NavSatTransform::gyroCallback(const sensor_msgs::ImuConstPtr& msg)
++  {
++    if (!gyro_yaw_time_.isZero() && msg->header.stamp > gyro_yaw_time_)
++    {
++      gyro_yaw_ = FilterUtilities::clampRotation(
++        gyro_yaw_ + msg->angular_velocity.z * (msg->header.stamp - gyro_yaw_time_).toSec());
++    }
++
++    gyro_yaw_time_ = msg->header.stamp;
++    has_gyro_ = true;
++  }
++
++  bool NavSatTransform::gateHeading(tf2::Quaternion &orientation, const ros::Time &stamp)
++  {
++    double roll;
++    double pitch;
++    double yaw;
++    tf2::Matrix3x3(orientation).getRPY(roll, pitch, yaw);
++
++    // The periodic update can revisit the same heading sample, so gate each sample exactly once and replay the
++    // previous decision otherwise. A repeated sample is trivially consistent with itself and would otherwise be
++    // able to re-anchor the gate on stale data. A repeat is the same sample seen twice, which means the same
++    // stamp AND the same yaw: two distinct samples that merely share a stamp (0.76 % of the frames in the
++    // replay corpus do) still have to be gated, or the reference stops being refreshed and the staleness rule
++    // withholds the output for a fault that never happened.
++    if (!last_gated_time_.isZero() && stamp <= last_gated_time_ && yaw == last_gated_yaw_)
++    {
++      orientation.setRPY(roll, pitch, last_accepted_yaw_);
++      return heading_gate_publish_;
++    }
++    last_gated_time_ = stamp;
++    last_gated_yaw_ = yaw;
++
++    if (last_accepted_yaw_time_.isZero())
++    {
++      acceptHeading(yaw, stamp);
++      heading_gate_publish_ = true;
++      return true;
++    }
++
++    // One nominal interval's worth of rotation. This is deliberately not scaled by the time since the last
++    // accepted heading: a budget that grows while the fault lasts is a gate that opens for the fault.
++    const double budget = max_yaw_rate_ * nominal_dt_ + yaw_gate_margin_;
++    const double since_accept = std::max((stamp - last_accepted_yaw_time_).toSec(), 0.0);
++
++    if (heading_valid_ && since_accept > max_gap_frames_ * nominal_dt_)
++    {
++      // Nothing has refreshed the reference for several intervals, so it no longer bounds anything
++      heading_valid_ = false;
++      has_pending_yaw_ = false;
++      ROS_WARN_THROTTLE(1.0, "navsat_transform: reference heading is %.2f s old and is now considered stale.",
++                        since_accept);
++    }
++
++    if (heading_valid_)
++    {
++      const double delta = FilterUtilities::clampRotation(yaw - last_accepted_yaw_);
++
++      if (std::fabs(delta) <= budget)
++      {
++        acceptHeading(yaw, stamp);
++        heading_gate_publish_ = true;
++        return true;
++      }
++
++      // Not reachable by the platform, so it cannot be real motion. Hold the last accepted yaw: rotating the
++      // lever arm with a bad heading would move the published position by 2*|offset|*sin(delta/2) while leaving
++      // every position quality field untouched.
++      ++yaw_hold_count_;
++      orientation.setRPY(roll, pitch, last_accepted_yaw_);
++
++      if (yaw_hold_count_ >= max_hold_frames_)
++      {
++        heading_valid_ = false;
++        has_pending_yaw_ = false;
++        ROS_WARN_THROTTLE(1.0, "navsat_transform: heading rejected for %d consecutive updates and is now "
++                          "considered invalid. Withholding gps odometry until it can be re-anchored.",
++                          yaw_hold_count_);
++        heading_gate_publish_ = false;
++        return false;
++      }
++
++      ROS_WARN_THROTTLE(1.0, "navsat_transform: heading increment of %.4f rad exceeds the budget of %.4f rad. "
++                        "Holding the last accepted yaw (%d consecutive).", delta, budget, yaw_hold_count_);
++      heading_gate_publish_ = true;
++      return true;
++    }
++
++    // Heading is invalid: the stale accepted yaw is no longer a usable reference, so re-anchor on something
++    // that does not come from before the fault.
++    heading_gate_publish_ = false;
++
++    if (use_gyro_ && has_gyro_ && gyro_yaw_time_ >= last_accepted_yaw_time_ && since_accept <= max_gyro_ref_time_)
++    {
++      // The gyro carries the pre-fault heading forward independently of the source under test, but only for as
++      // long as its bias stays small compared with the budget, hence max_gyro_ref_time_.
++      const double gyro_delta = FilterUtilities::clampRotation(yaw - gyro_yaw_);
++
++      if (std::fabs(gyro_delta) <= budget + gyro_drift_rate_ * since_accept)
++      {
++        acceptHeading(yaw, stamp);
++        heading_gate_publish_ = true;
++        ROS_WARN_THROTTLE(1.0, "navsat_transform: heading re-anchored at %.4f rad against the gyro reference "
++                          "after %.2f s; resuming gps odometry.", yaw, since_accept);
++        return true;
++      }
++
++      orientation.setRPY(roll, pitch, last_accepted_yaw_);
++      return false;
++    }
++
++    // No usable gyro reference: fall back to two consecutive headings that agree with each other
++    if (has_pending_yaw_ && std::fabs(FilterUtilities::clampRotation(yaw - pending_yaw_)) <= budget)
++    {
++      acceptHeading(yaw, stamp);
++      heading_gate_publish_ = true;
++      ROS_WARN_THROTTLE(1.0, "navsat_transform: heading re-anchored at %.4f rad on two consecutive agreeing "
++                        "samples; resuming gps odometry.", yaw);
++      return true;
++    }
++
++    orientation.setRPY(roll, pitch, last_accepted_yaw_);
++    pending_yaw_ = yaw;
++    pending_yaw_time_ = stamp;
++    has_pending_yaw_ = true;
++    return false;
++  }
++
+   void NavSatTransform::getRobotOriginWorldPose(const tf2::Transform &gps_odom_pose,
+                                                 tf2::Transform &robot_odom_pose,
+                                                 const ros::Time &transform_time)
+   {
+     robot_odom_pose.setIdentity();
+ 
++    // Nothing is rotated into the lever arm unless both lookups below succeed, so default to publishing
++    heading_gate_publish_ = true;
++
+     // Remove the offset from base_link
+     tf2::Transform gps_offset_rotated;
+     bool can_transform = RosFilterUtilities::lookupTransformSafe(tf_buffer_,
+@@ -596,9 +774,13 @@
+ 
+       if (can_transform)
+       {
++        // Reject heading increments the platform cannot physically produce, before they reach the lever arm
++        tf2::Quaternion gated_orientation = robot_orientation.getRotation();
++        gateHeading(gated_orientation, transform_time);
++
+         // Zero out rotation because we don't care about the orientation of the
+         // GPS receiver relative to base_link
+-        gps_offset_rotated.setOrigin(tf2::quatRotate(robot_orientation.getRotation(), gps_offset_rotated.getOrigin()));
++        gps_offset_rotated.setOrigin(tf2::quatRotate(gated_orientation, gps_offset_rotated.getOrigin()));
+         gps_offset_rotated.setRotation(tf2::Quaternion::getIdentity());
+         robot_odom_pose = gps_offset_rotated.inverse() * gps_odom_pose;
+       }
+@@ -825,6 +1007,13 @@
+       tf2::Transform transformed_cartesian_robot;
+       getRobotOriginWorldPose(transformed_cartesian_gps, transformed_cartesian_robot, gps_odom.header.stamp);
+ 
++      // The heading that rotates the navsat offset is not trustworthy; withhold this update rather than
++      // publishing a lever-arm correction built on it.
++      if (!heading_gate_publish_)
++      {
++        return false;
++      }
++
+       // Rotate the covariance as well
+       tf2::Matrix3x3 rot(cartesian_world_transform_.getRotation());
+       Eigen::MatrixXd rot_6d(POSE_SIZE, POSE_SIZE);

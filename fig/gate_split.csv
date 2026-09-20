@@ -1,0 +1,13 @@
+rule,subset,false_gate_pct,onsets_held,onsets,withheld,residual_episodes_010,residual_frames_010,residual_episodes_005
+v3b,operational,0.0407,14,15,117,15,17,40
+v3b,induced,0.101,4,6,22,5,10,14
+v3a 5 s,operational,0.2004,14,15,866,7,8,33
+v3a 5 s,induced,0.6775,4,6,154,5,5,18
+v3a 10 s,operational,0.3216,13,15,1381,5,6,31
+v3a 10 s,induced,1.2184,3,6,261,4,4,16
+v3a 20 s,operational,0.4264,11,15,1839,5,5,30
+v3a 20 s,induced,2.4843,3,6,496,3,3,13
+v3a 60 s,operational,0.8443,11,15,3717,4,4,29
+v3a 60 s,induced,6.0561,4,6,1151,3,3,12
+v3a unbounded,operational,3.7548,11,15,13555,2,2,24
+v3a unbounded,induced,33.7989,4,6,5911,2,2,11
