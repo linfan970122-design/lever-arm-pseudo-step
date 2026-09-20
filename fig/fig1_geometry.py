@@ -9,7 +9,7 @@ Single-column figure for GPS Solutions (84 mm).  Schematic, top view, two panels
       ANT1 does not move, the rotated lever arm swings, the published point steps
       by 2|L| sin(Delta/2) = 0.406 m.
 
-Numbers: theory_numbers.py / the derivation note (not distributed).  Geometry is schematic but the
+Numbers: theory_numbers.py / 理论_可检出性_v0_0919.md.  Geometry is schematic but the
 proportions are real: |L| = 0.3655 m, antenna baseline b = 0.72 m, body width 0.89 m.
 
 Run:
@@ -63,7 +63,7 @@ with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
         _TN[(_r["group"], _r["quantity"])] = float(_r["value"]) \
             if _r["value"].replace(".", "").replace("-", "").isdigit() else _r["value"]
 DELTA = -float(_TN[("event", "Delta (one 5 Hz frame)")])
-DYAW = -DELTA                    # yaw = 90 - heading  => yaw step is -Delta  (TO VERIFY)
+DYAW = -DELTA                    # yaw = 90 - heading  => yaw step is -Delta  (verified 0920, data/sign_check_0906.md)
 
 
 def rot(a_deg):
@@ -204,7 +204,7 @@ ax_b.add_patch(Arc(ANT1, 0.46, 0.46, angle=0, theta1=t1, theta2=t2,
 
 arrow(ax_b, P_PUB, P_BAD, VERM, lw=1.8, z=8, head=3.4)
 txt(ax_b, 0.5 * (P_PUB + P_BAD) + np.array([-0.055, 0.0]),
-    "$|\\Delta\\mathbf{p}_{\\mathrm{pub}}| = 2|\\mathbf{L}|\\sin(\\Delta/2)$"
+    "$|\\Delta\\mathbf{p}_{\\mathrm{pub}}| = 2|\\mathbf{L}|\\sin(|\\Delta|/2)$"
     "\n$= %.3f$ m" % (2.0 * LNORM * np.sin(np.radians(abs(DELTA)) / 2.0)),
     color=VERM, ha="right", va="center", size=7.0, linespacing=1.30)
 

@@ -28,7 +28,8 @@ fig/        gate.py           reference implementation of the gate (Python twin 
             motion_class.py   IMU-only motion labelling, never uses the RTK heading
             theory_numbers.py every number quoted in the theory sections
             results_numbers.py every number quoted in the results sections
-            gate_mahal_sigma.py  1-D Mahalanobis comparison sweep
+            gate_mahal_sigma.py  1-D Mahalanobis comparison sweep (declared vs measured variance)
+            gate_mahal_q_sweep.py  1-D Mahalanobis sweep over the filter's yaw process noise
             fill_tables.py    fills the manuscript's Tables 3 and 4 from results_numbers.csv
             fig1..fig8_*.py   Figures 1-8
             roc_position_tests.py  ROC of the two deployed position-domain tests.
@@ -50,6 +51,8 @@ analysis/   lidar_icp_yaw.py         frame-to-frame lidar ICP yaw increment (who
             lidar_icp_yaw_windows.py the same, restricted to event windows (what was run)
             lidar_heading_ref.py     tree-row heading reference (orchard only; superseded by ICP)
             align_lidar_events.py    aligns ICP yaw with the RTK events; writes Fig. 9
+            frame_intervals.py       published-frame interval statistics (Section 4.6) -> data/frame_intervals.md
+            sign_check_0906.py       sign convention of eq. (2)-(3) checked on the 6 September events -> data/sign_check_0906.md
             above_floor_check.py     per-event table of every event above the ICP noise floor
             m8/                      robot_localization replay, node-side gate
             m8b/                     the same rule moved to the measurement side

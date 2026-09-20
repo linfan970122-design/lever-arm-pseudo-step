@@ -99,19 +99,20 @@ fig.subplots_adjust(left=0.072, right=0.988, top=0.90, bottom=0.145, wspace=0.21
 # ---------------------------------------------------------------- panel (a)
 XLIM = (2.0, 30.0)
 BASE_EP = int(NUM[("gated_residual", "no gate: episodes >=0.10 m")])
-YMAX = 1.10 * max(float(t["residual_episodes_0.10"].max()) for t in (sw3a, sw3b, sw2, sw1))
+YMAX = 1.42 * max(float(t["residual_episodes_0.10"].max()) for t in (sw3a, sw3b, sw2, sw1))
 axa.axvspan(XLIM[0], BMAX, color="#f2c9b8", alpha=0.30, lw=0, zorder=1)
 for x, c, lab, side in ((BMAX, GREEN, "gyro max %.1f$^{\\circ}$" % BMAX, -1),
                         (G_REC, VERM, "recommended %.0f$^{\\circ}$" % G_REC, 1)):
     axa.axvline(x, color=c, lw=0.8, ls=(0, (4, 2)), zorder=4)
-    axa.text(x + 0.4 * side, 0.52 * YMAX, lab, color=c, fontsize=6.6,
+    axa.text(x + 0.4 * side, 0.42 * YMAX, lab, color=c, fontsize=6.6,
              ha="left" if side > 0 else "right", va="center", rotation=90, zorder=9,
              path_effects=HALO)
-axa.axhline(BASE_EP, color=GREY, lw=1.0, ls=(0, (1, 2)), zorder=5)
+axa.axhline(BASE_EP, color="#a6a6a6", lw=1.2, ls=(0, (6, 3)), zorder=5)
 for k_, ls_ in ((3.0, (0, (5, 1, 1, 1))), (5.0, (0, (3, 1, 1, 1, 1, 1)))):
     axa.axhline(mah_all.loc[k_, "residual_episodes_010"], color=GREEN, lw=1.0, ls=ls_,
                 zorder=6, label="Mahalanobis, $k$ = %.0f" % k_)
-axa.text(2.3, BASE_EP + 0.012 * YMAX, "no gate: %d episodes" % BASE_EP, color=GREY, fontsize=6.8,
+axa.text(2.3, BASE_EP + 0.012 * YMAX, "no gate: %d episodes" % BASE_EP, color="#8f8f8f",
+         fontsize=6.8,
          ha="left", va="bottom", zorder=9, path_effects=HALO)
 for tab, c, lw, ls, mk, lab in (
         (sw3a, PURPLE, 1.4, "-", "D", "v3 (a), gyro re-anchor"),
@@ -128,13 +129,16 @@ axa.set_ylabel("residual pseudo-step episodes $\\geq$ 0.10 m")
 axa.grid(True, which="major", color="#dddddd", lw=0.5, zorder=0)
 axa.set_axisbelow(True)
 axa.tick_params(direction="out", length=2.6)
-axa.legend(loc="upper right", frameon=False, handlelength=2.2, borderaxespad=0.4,
-           labelspacing=0.28, fontsize=6.6)
+h_, l_ = axa.get_legend_handles_labels()
+h_ += [Line2D([], [], color="#a6a6a6", lw=1.2, ls=(0, (6, 3)))]
+l_ += ["no gate (baseline)"]
+axa.legend(h_, l_, loc="upper left", ncol=2, frameon=False, handlelength=1.8,
+           borderaxespad=0.3, labelspacing=0.28, columnspacing=0.9, fontsize=6.6)
 axa.annotate("at $g$ = %.0f$^{\\circ}$: v3(a) %d, v3(b) %d,\nv2 %d, v1 %d, no gate %d"
              % (G_REC, int(rec3a["residual_episodes_0.10"]),
                 int(rec3b["residual_episodes_0.10"]), int(rec2["residual_episodes_0.10"]),
                 int(rec1["residual_episodes_0.10"]), BASE_EP),
-             xy=(G_REC, rec3a["residual_episodes_0.10"]), xytext=(29.6, 0.20 * YMAX),
+             xy=(G_REC, rec3a["residual_episodes_0.10"]), xytext=(29.6, 0.135 * YMAX),
              fontsize=6.8, color=PURPLE, ha="right", va="center", zorder=9, linespacing=1.3,
              path_effects=HALO,
              arrowprops=dict(arrowstyle="-|>", lw=0.7, color=PURPLE, mutation_scale=5,

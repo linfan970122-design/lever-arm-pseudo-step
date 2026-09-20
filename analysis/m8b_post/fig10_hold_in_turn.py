@@ -87,15 +87,24 @@ t = df.t_ref.values
 yaw_rec = np.degrees(np.unwrap(np.radians(df.yaw_in_deg.values)))
 i0 = int(np.argmin(np.abs(t - 1526.911)))          # last clean sample before the fault
 yaw_gyro = yaw_rec[i0] + (df.gz_cum_deg.values - df.gz_cum_deg.values[i0])
-course = df.course_deg.values.copy()
+course = df.cog_ant_deg.values.copy()
 course = course + 360.0 * np.round((yaw_rec - course) / 360.0)
-course[df.speed_ms.values < 0.5] = np.nan
+# a sample near 180° from the yaw (near-reverse motion) is branch-ambiguous against the yaw;
+# put it on the branch nearest the previous plotted course sample instead
+_ok = df.speed_ant_ms.values >= 0.5
+_prev = None
+for _i in np.flatnonzero(_ok):
+    if _prev is not None and abs(course[_i] - yaw_rec[_i]) > 150.0:
+        _k = np.round((course[_prev] - course[_i]) / 360.0)
+        course[_i] += 360.0 * _k
+    _prev = _i
+course[df.speed_ant_ms.values < 0.5] = np.nan
 
 # ---- panel (c) series ---------------------------------------------------------
-ARMS = [('bas_stock_q060', 'STOCK', GREY, '-'),
-        ('bas_gate_q060', 'GATED (node side)', ORANGE, '-'),
-        ('bas_meas_q060', 'MEAS (measurement side)', BLUE, '-'),
-        ('bas_both_q060', 'BOTH (stacked)', VERM, '-')]
+ARMS = [('bas_stock_q060', 'stock', GREY, ':'),
+        ('bas_gate_q060', 'node-side (GATED)', ORANGE, '--'),
+        ('bas_meas_q060', 'measurement-side (MEAS)', BLUE, '-.'),
+        ('bas_both_q060', 'stacked (BOTH)', VERM, '-')]
 
 FIG_W = 174 / 25.4
 fig, (axa, axb, axc) = plt.subplots(3, 1, figsize=(FIG_W, 5.6), sharex=True,
@@ -112,10 +121,10 @@ axa.plot(t, yaw_rec, color=INK, lw=1.1, label="recorded RTK heading (yaw, unwrap
 axa.plot(t, yaw_gyro, color=GREEN, lw=1.0, ls="--",
          label="gyro-integrated from the last clean sample (1526.91 s)")
 axa.plot(t, course, color=PURPLE, lw=1.2, ls=":",
-         label="course over ground while speed > 0.5 m/s (independent check)")
+         label="course of the antenna point while speed > 0.5 m/s (consistency check)")
 axa.set_ylabel("heading (deg, unwrapped)")
 axa.legend(loc="upper left", frameon=False, handlelength=2.2, borderaxespad=0.4,
-           labelspacing=0.3)
+           labelspacing=0.3, bbox_to_anchor=(0.035, 1.0))
 for x, lab in ((1527.71, "re-anchors on\nthe frozen value"),
                (1539.56, "MEAS re-anchors\n(+10.24 s)"),
                (1549.64, "node re-anchors\n(+10.00 s)")):
@@ -132,7 +141,7 @@ axa.annotate("+91.5$^\\circ$ back onto\nthe correct branch",
              ha="left", va="center", fontsize=6.6, color=VERM, path_effects=HALO,
              arrowprops=dict(arrowstyle="-", color=VERM, lw=0.6,
                              shrinkA=0.0, shrinkB=1.0))
-axa.text(0.002, 0.03, "(a)", transform=axa.transAxes, fontsize=8.6, va="bottom",
+axa.text(0.002, 0.955, "(a)", transform=axa.transAxes, fontsize=8.6, va="bottom",
          ha="left", weight="bold")
 
 # ------------------------------------------------------------------ (b)
@@ -149,9 +158,9 @@ axb.set_yticks([0, 1, 2])
 axb.set_yticklabels(["reject", "hold", "accept"])
 axb.set_ylim(-0.55, 3.35)
 axb.set_ylabel("gate state")
-axb.legend(loc="upper left", frameon=False, handlelength=2.2, borderaxespad=0.3,
-           labelspacing=0.2, ncol=3, columnspacing=1.2)
-axb.text(0.002, 0.04, "(b)", transform=axb.transAxes, fontsize=8.6, va="bottom",
+axb.legend(loc="upper left", frameon=False, handlelength=1.9, borderaxespad=0.3,
+           labelspacing=0.2, ncol=3, columnspacing=1.0, bbox_to_anchor=(0.035, 1.0))
+axb.text(0.002, 0.955, "(b)", transform=axb.transAxes, fontsize=8.6, va="bottom",
          ha="left", weight="bold")
 
 # ------------------------------------------------------------------ (c)
@@ -179,10 +188,10 @@ print("  frozen span %.2f - %.2f s, %d frames, hd_ok all = %d"
       % (FROZEN[0], FROZEN[1],
          int(((t >= FROZEN[0]) & (t <= FROZEN[1])).sum()),
          int(df.hd_ok[(t >= FROZEN[0]) & (t <= FROZEN[1])].min())))
-mrec = (t > 1530.6) & (t < 1549.5) & (df.speed_ms.values > 0.5)
+mrec = (t > 1530.6) & (t < 1549.5) & (df.speed_ant_ms.values > 0.5)
 print("  |course - recorded heading| after the +91.5 deg step: median %.1f deg, max %.1f deg"
-      % (np.median(np.abs(df.course_minus_hdgyaw.values[mrec])),
-         np.max(np.abs(df.course_minus_hdgyaw.values[mrec]))))
+      % (np.median(np.abs(df.cog_ant_minus_yaw.values[mrec])),
+         np.max(np.abs(df.cog_ant_minus_yaw.values[mrec]))))
 for tag, name, _, _ in ARMS:
     tt, dd = dev_series(tag)
     tt = tt - T0_REF

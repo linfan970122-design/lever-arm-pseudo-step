@@ -28,6 +28,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
 from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 
 import gate as G
 
@@ -108,8 +109,12 @@ def marks(ax, y_lab):
 
 # ==================================================================== figure
 FIG_W = 174 / 25.4
-fig, (axa, axb, axc) = plt.subplots(1, 3, figsize=(FIG_W, 3.05))
-fig.subplots_adjust(left=0.075, right=0.995, top=0.90, bottom=0.145, wspace=0.42)
+fig, (axa, axb, axc) = plt.subplots(1, 3, figsize=(FIG_W, 4.15))
+fig.subplots_adjust(left=0.075, right=0.995, top=0.930, bottom=0.375, wspace=0.42)
+
+# legends live in the strip below each panel so that no curve runs through them
+LEG = dict(loc="upper left", bbox_to_anchor=(-0.02, -0.215), frameon=False,
+           borderaxespad=0.0, labelspacing=0.30, fontsize=7.0)
 
 
 def marks(ax, y_lab):
@@ -151,8 +156,10 @@ axa.set_yscale("log")
 axa.set_ylim(3e-3, 300.0)
 axa.set_ylabel("genuine frames not accepted (%)")
 marks(axa, 30.0)
-axa.legend(loc="lower left", frameon=False, handlelength=2.2, borderaxespad=0.35,
-           labelspacing=0.28, fontsize=6.2)
+h, l = axa.get_legend_handles_labels()
+h += [Patch(facecolor="#f2c9b8", alpha=0.30, lw=0)]
+l += ["shaded: $g$ below the gyro maximum (%.1f$^{\\circ}$)" % BMAX]
+axa.legend(h, l, handlelength=2.2, **LEG)
 tag(axa, "(a)")
 
 # ------------------------------------------------- (b) by motion state
@@ -170,8 +177,7 @@ marks(axb, 30.0)
 h, l = axb.get_legend_handles_labels()
 h += [Line2D([], [], color=GREY, lw=1.3), Line2D([], [], color=GREY, lw=0.9, ls=(0, (4, 2)))]
 l += ["v3 (b)", "v2"]
-axb.legend(h, l, loc="lower left", frameon=False, handlelength=2.0, borderaxespad=0.35,
-           labelspacing=0.28, fontsize=6.4)
+axb.legend(h, l, handlelength=2.0, **LEG)
 tag(axb, "(b)")
 
 # ------------------------------------------------- (c) frames with no output
@@ -191,9 +197,8 @@ axc.set_yscale("log")
 axc.set_ylim(3e-3, 300.0)
 axc.set_ylabel("frames with no output (%)")
 marks(axc, 30.0)
-axc.legend(loc="lower left", frameon=False, handlelength=2.2, borderaxespad=0.35,
-           labelspacing=0.28, fontsize=6.4)
-axc.text(2.3, 130.0, "Mahalanobis: 0 % (never withholds)", fontsize=6.4, color=GREEN,
+axc.legend(handlelength=2.2, **LEG)
+axc.text(2.3, 230.0, "Mahalanobis: 0 %", fontsize=6.4, color=GREEN,
          ha="left", va="top", zorder=9, path_effects=HALO)
 axc.annotate("%.2f %% under (a):\n%s frames, %d outages\nlonger than 60 s"
              % (rec3a.unpublished_pct, format(int(rec3a.unpublished), ","),

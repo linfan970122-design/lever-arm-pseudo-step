@@ -133,7 +133,20 @@ for i, s in enumerate(SITES):
                 edgecolor=COL[s], lw=0.8, zorder=6)
     axb.plot([i - 0.32, i + 0.32], [agg.loc[s, "rate"]] * 2, color=COL[s], lw=1.6, zorder=7)
 top = bb.loc[bb.per_fixed_h.idxmax()]
-axb.annotate("%s\n%d frames in %.2f fixed h" % (top.bag, top.n_pstep, top.fixed_h),
+
+
+def human_bag(bag, site):
+    """'run_20260828_2026-08-28-10-16-47' -> '2026-08-28 10:16, greenhouse' (label only)"""
+    import re as _re
+    m = _re.search(r"(\d{4})-(\d{2})-(\d{2})-(\d{2})-(\d{2})-(\d{2})$", str(bag))
+    if not m:
+        return "%s, %s" % (bag, site)
+    y, mo, d_, hh, mi, _ss = m.groups()
+    return "%s-%s-%s %s:%s, %s" % (y, mo, d_, hh, mi, site)
+
+
+axb.annotate("%s\n%d frames in %.2f fixed h"
+             % (human_bag(top.bag, top.site), top.n_pstep, top.fixed_h),
              xy=(SITES.index(top.site) + 0.0, top.per_fixed_h), xytext=(2.6, 15.5),
              fontsize=6.6, color=VERM, ha="right", va="center", zorder=9, linespacing=1.3,
              path_effects=HALO,

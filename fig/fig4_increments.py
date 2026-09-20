@@ -115,8 +115,9 @@ d["cls_imu"] = _cls
 d["adpsi"] = d.dpsi_deg.abs()
 # motion class v2 has four labels; all four are drawn so the legend counts add up to the
 # corpus.  "na" = less than 3 s of history, or a recording without an IMU.
-SETS = [("all", VERM, 1.3), ("straight", BLUE, 1.0), ("turn", ORANGE, 1.0),
-        ("slow", GREY, 1.0), ("na", PURPLE, 1.0)]
+# colour AND linestyle per class, so the four classes stay apart in grayscale
+SETS = [("all", VERM, 1.5, "-"), ("straight", BLUE, 1.0, "-"), ("turn", ORANGE, 1.0, "--"),
+        ("slow", GREY, 1.0, "-."), ("na", PURPLE, 1.0, ":")]
 NAMES = {"all": "all", "straight": "straight", "turn": "turn", "slow": "slow",
          "na": "unclassified"}
 V = {"all": d.adpsi.to_numpy()}
@@ -128,8 +129,8 @@ print("frames %d, straight %d, turn %d, slow %d, na %d (sum %d)"
 
 # ==================================================================== figure
 FIG_W = 174 / 25.4
-fig, (axa, axb) = plt.subplots(1, 2, figsize=(FIG_W, 3.15))
-fig.subplots_adjust(left=0.086, right=0.988, top=0.90, bottom=0.135, wspace=0.225)
+fig, (axa, axb) = plt.subplots(1, 2, figsize=(FIG_W, 4.05))
+fig.subplots_adjust(left=0.086, right=0.988, top=0.705, bottom=0.105, wspace=0.225)
 
 XLIM = (0.01, 200.0)
 XT = [0.01, 0.1, 1, 10, 100]
@@ -137,14 +138,17 @@ XTL = ["0.01", "0.1", "1", "10", "100"]
 
 
 def marks(ax, ylo, rot_y):
+    # rot_y is kept for call compatibility; the labels now stand in the margin ABOVE the
+    # axes, where they cannot sit on the distribution tails.
     ax.axvspan(BMAX, XLIM[1], color="#f2c9b8", alpha=0.35, lw=0, zorder=1)
-    for x, c, lab in ((B99, GREEN, "gyro p99 = %.1f$^{\\circ}$" % B99),
-                      (BMAX, GREEN, "gyro max = %.1f$^{\\circ}$" % BMAX),
-                      (D30, VERM, "$\\Delta_{\\min}(0.30$ m$)$ = %.1f$^{\\circ}$" % D30),
-                      (D50, VERM, "$\\Delta_{\\min}(0.50$ m$)$ = %.1f$^{\\circ}$" % D50)):
-        ax.axvline(x, color=c, lw=0.8, ls=(0, (4, 2)), zorder=4)
-        ax.text(x * 0.88, rot_y, lab, color=c, fontsize=6.6, ha="left", va="bottom",
-                rotation=90, zorder=9, path_effects=HALO)
+    for x, c, lab in ((B99, GREEN, "gyro p99 %.1f$^{\\circ}$" % B99),
+                      (BMAX, GREEN, "gyro max %.1f$^{\\circ}$" % BMAX),
+                      (D30, VERM, "$\\Delta_{\\min}$(0.30 m) %.1f$^{\\circ}$" % D30),
+                      (D50, VERM, "$\\Delta_{\\min}$(0.50 m) %.1f$^{\\circ}$" % D50)):
+        ax.axvline(x, color=c, lw=0.8, ls=(0, (4, 2)), zorder=4, clip_on=True)
+        ax.text(x, 1.015, lab, color=c, fontsize=6.4, ha="left", va="center",
+                rotation=90, rotation_mode="anchor", zorder=9,
+                transform=ax.get_xaxis_transform(), clip_on=False)
     ax.set_xscale("log")
     ax.set_xlim(*XLIM)
     ax.set_xticks(XT)
@@ -158,12 +162,12 @@ def marks(ax, ylo, rot_y):
 
 # ---------------------------------------------------------------- panel (a)
 EDGES = np.logspace(-2, np.log10(180.0), 70)
-for lab, c, lw in SETS:
+for lab, c, lw, ls in SETS:
     if lab == "all":
         continue
     h, _ = np.histogram(V[lab], bins=EDGES)
     axa.step(EDGES[:-1], np.maximum(h / V[lab].size, 1e-12), where="post", color=c, lw=1.0,
-             label="%s ($n$ = %s)" % (NAMES[lab], format(V[lab].size, ",")), zorder=5)
+             ls=ls, label="%s ($n$ = %s)" % (NAMES[lab], format(V[lab].size, ",")), zorder=5)
 axa.set_yscale("log")
 axa.set_ylim(2e-6, 0.5)
 axa.set_ylabel("fraction of frames per bin")
@@ -171,15 +175,15 @@ marks(axa, 2e-6, 3.3e-6)
 axa.text(190.0, 0.30, "physically impossible\nin one 0.2 s frame", fontsize=6.6, ha="right",
          va="top", color=VERM, linespacing=1.25, zorder=9, path_effects=HALO)
 axa.legend(loc="lower left", frameon=False, handlelength=1.7, borderaxespad=0.35)
-axa.text(0.0, 1.02, "(a)", transform=axa.transAxes, fontsize=8.6, va="bottom", ha="left",
+axa.text(0.0, 1.44, "(a)", transform=axa.transAxes, fontsize=8.6, va="bottom", ha="left",
          weight="bold")
 
 # ---------------------------------------------------------------- panel (b)
 xs = np.logspace(-2, np.log10(180.0), 400)
-for lab, c, lw in SETS:
+for lab, c, lw, ls in SETS:
     v = np.sort(V[lab])
     p = 1.0 - np.searchsorted(v, xs, side="right") / v.size
-    axb.plot(xs, np.maximum(p, 1e-7), color=c, lw=lw,
+    axb.plot(xs, np.maximum(p, 1e-7), color=c, lw=lw, ls=ls,
              label="%s ($n$ = %s)" % (NAMES[lab], format(v.size, ",")), zorder=5)
 axb.set_yscale("log")
 axb.set_ylim(2e-6, 1.5)
@@ -197,7 +201,7 @@ axb.annotate("$P(|\\Delta\\psi| > %.1f^{\\circ})$ = %.3f %%\n(%s frames of %s)"
              arrowprops=dict(arrowstyle="-|>", lw=0.7, color=VERM, mutation_scale=5,
                              shrinkA=2, shrinkB=3))
 axb.legend(loc="lower left", frameon=False, handlelength=1.7, borderaxespad=0.35)
-axb.text(0.0, 1.02, "(b)", transform=axb.transAxes, fontsize=8.6, va="bottom", ha="left",
+axb.text(0.0, 1.44, "(b)", transform=axb.transAxes, fontsize=8.6, va="bottom", ha="left",
          weight="bold")
 
 for ext, kw in (("pdf", {}), ("png", {"dpi": 300})):
@@ -206,7 +210,7 @@ for ext, kw in (("pdf", {}), ("png", {"dpi": 300})):
 print("checks:")
 print("  gyro bound p99 / max     : %.2f / %.2f deg per frame" % (B99, BMAX))
 print("  Delta_min(0.30) / (0.50) : %.1f / %.1f deg" % (D30, D50))
-for lab, _, _ in SETS:
+for lab, _, _, _ in SETS:
     v = V[lab]
     print("  %-8s RMS %.3f deg, P(>5) %.4f %%, P(>%.2f) %.4f %%, max %.2f"
           % (lab, float(np.sqrt(np.mean(v * v))), 100.0 * (v > 5).mean(), BMAX,

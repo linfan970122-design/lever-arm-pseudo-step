@@ -437,7 +437,7 @@ def main():
     BLUE, ORANGE, GREEN, VERM, INK = "#0072B2", "#E69F00", "#009E73", "#D55E00", "#1a1a1a"
 
     fig, (axa, axb) = plt.subplots(1, 2, figsize=(6.85, 3.05))
-    fig.subplots_adjust(left=0.075, right=0.995, bottom=0.145, top=0.95, wspace=0.28)
+    fig.subplots_adjust(left=0.075, right=0.995, bottom=0.145, top=0.90, wspace=0.28)
 
     # --- (a) the reference against the gyro, per lidar frame, validation segments
     gx = np.concatenate([san[k]["pairs"][0] for k in sorted(san) if san[k]["pairs"][0].size])
@@ -474,15 +474,22 @@ def main():
     cyc = plt.rcParams["axes.prop_cycle"].by_key()["color"]
     for i, s_ in enumerate(sites):
         colors.setdefault(s_, cyc[i % len(cyc)])
-    markers = {"0": "o", "1": "^"}
+    # marker encodes the site (readable in grayscale), fill encodes natural vs induced
+    site_mk = {"concrete yard": "o", "greenhouse": "s", "orchard": "^"}
+    spare_mk = ["D", "v", "P", "X"]
+    for i_, s_ in enumerate(sites):
+        site_mk.setdefault(s_, spare_mk[i_ % len(spare_mk)])
     labels = {"0": "natural", "1": "induced"}
     for s_ in sites:
         for v in sorted({r["induced"] for r in has}):
             idx = [i for i, r in enumerate(has) if r["site"] == s_ and r["induced"] == v]
             if not idx:
                 continue
-            axb.scatter(ar[idx], al[idx], s=16, color=colors[s_], marker=markers.get(str(v), "s"),
-                        edgecolors=INK, linewidths=0.3, alpha=0.9, zorder=4,
+            filled = str(v) == "1"
+            axb.scatter(ar[idx], al[idx], s=18, marker=site_mk[s_],
+                        facecolors=colors[s_] if filled else "white",
+                        edgecolors=colors[s_] if filled else colors[s_],
+                        linewidths=0.9, alpha=0.9, zorder=4,
                         label="%s, %s" % (s_, labels.get(str(v), str(v))))
     lim_lo = max(1e-2, float(np.nanmin(ar)) * 0.7) if ar.size else 0.01
     lim_hi = float(np.nanmax(ar)) * 1.6 if ar.size else 100.0

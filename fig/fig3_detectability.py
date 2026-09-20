@@ -8,7 +8,7 @@ Double-column figure for GPS Solutions (174 mm), two panels:
   (b) the same relation for this vehicle (|L| = 0.3655 m) against the heading-domain
       gate g, whose position-domain equivalent is T_eq = 2|L| sin(g/2).
 
-Numbers: theory_numbers.py / the derivation note (not distributed).
+Numbers: theory_numbers.py / 理论_可检出性_v0_0919.md.
 
 Run:
     systemd-run --user --scope -p MemoryMax=4G -- python3 fig3_detectability.py
@@ -110,7 +110,7 @@ axa.clabel(cs, fmt=lambda v: "%g$^{\\circ}$" % v, fontsize=6.6, inline=True,
 # guaranteed-miss region: T >= 2|L|  <=>  |L| <= T/2
 axa.fill_between(Tg, 0.1, np.clip(Tg / 2.0, 0.1, None), facecolor="white",
                  edgecolor="#555555", hatch="///", linewidth=0.6, zorder=3)
-axa.text(0.98, 0.105, "never detectable\n($T \\geq 2|\\mathbf{L}|$)",
+axa.text(0.80, 0.115, "never detectable ($T \\geq 2|\\mathbf{L}|$)",
          fontsize=6.6, color="#333333", ha="right", va="bottom", zorder=6,
          linespacing=1.30, path_effects=HALO)
 
@@ -172,13 +172,16 @@ axb.text(0.0115, 3.3,
          zorder=8, path_effects=HALO)
 
 # deployed thresholds
+LAB_XY = {0.30: (0.030, 42.0), 0.50: (0.030, 120.0)}     # own leader line each
 for T in T_DEPLOYED:
     d = float(delta_min(T, LNORM))
     axb.plot([T], [d], "o", ms=4.6, mfc="white", mec=VERM, mew=1.2, zorder=8)
     axb.annotate("$T$ = %.2f m\n$\\Delta_{\\mathrm{min}}$ = %.0f$^{\\circ}$" % (T, d),
-                 xy=(T, d), xytext=(-6, 9), textcoords="offset points",
-                 fontsize=7.0, color=VERM, ha="right", va="bottom",
-                 linespacing=1.35, zorder=9, path_effects=HALO)
+                 xy=(T, d), xytext=LAB_XY[T], textcoords="data",
+                 fontsize=7.0, color=VERM, ha="left", va="center",
+                 linespacing=1.35, zorder=9, path_effects=HALO,
+                 arrowprops=dict(arrowstyle="-", lw=0.6, color=VERM, shrinkA=3,
+                                 shrinkB=4))
 
 # recorded event
 axb.plot([T_EVENT], [EVENT_DELTA], "*", ms=9.0, mfc=ORANGE, mec="#5a4200", mew=0.6,
