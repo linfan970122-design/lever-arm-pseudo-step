@@ -4,7 +4,7 @@ Code and derived results for the manuscript
 
 > **Heading outliers become position steps: the lever-arm pseudo-step in dual-antenna RTK
 > and where to guard against it**
-> Ke Sheng, Jianxi Zhu, Tao Zheng*, Zhenlei Chen — Jinhua Academy of Agricultural Sciences, Jinhua, Zhejiang, China (*corresponding author)
+> Ke Sheng*, Tao Zheng*, Jianxi Zhu, Zhenlei Chen — Jinhua Academy of Agricultural Sciences, Jinhua, Zhejiang, China (*corresponding authors)
 
 A dual-antenna RTK receiver reports the position of one antenna and the heading of the
 baseline between the two. The point a vehicle controller steers is neither of those: it is
